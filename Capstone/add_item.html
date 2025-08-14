@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=MuseoModerno:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <title>Poyo Waste</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+        
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+        
+        .container {
+            position: relative;
+            height: 100vh;
+            background-image: linear-gradient(to right bottom, #79c769, #a0d172, #c2dc7f, #e1e690, #fdf1a4);
+            overflow: hidden; 
+        }
+        
+        .content {
+            position: absolute;
+            top: 90px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: white;
+            border-top-left-radius: 35px;
+            border-top-right-radius: 35px;
+            overflow-y: auto;
+            padding: 30px;
+            box-shadow: 0 -4px 6px rgba(0,0,0,0.1);
+            transform: translateY(100%); 
+            transition: transform 1.5s cubic-bezier(0.16, 1, 0.3, 1); 
+        }
+        
+        .content.active {
+            transform: translateY(0); 
+        }
+        
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 22px;
+            font-weight: normal;
+        }
+        
+        .form-group {
+            margin-bottom: 30px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 16px;
+            color: #333;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            background-color: #F0F0F0;
+            border-radius: 25px;
+            font-size: 16px;
+            color: #777;
+        }
+        
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 15px;
+        }
+        
+        .conditional-field {
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .btn-continue {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: #4b6e2e;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .loading::after {
+            content: "";
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(75, 110, 46, 0.3);
+            border-radius: 50%;
+            border-top-color: #4b6e2e;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="content">
+            <h2>Add E-Waste Item</h2>
+            <form id="inventory-form">
+                <div class="form-group">
+                    <label for="e-waste-category">E-waste Category*</label>
+                    <select id="e-waste-category" required>
+                        <option value="" disabled selected>Select One</option>
+                        <option value="Computers">Computers/Laptops</option>
+                        <option value="Mobile Phones">Mobile Phones</option>
+                        <option value="Televisions">Televisions/Monitors</option>
+                        <option value="Appliances">Home Appliances</option>
+                        <option value="Batteries">Batteries</option>
+                        <option value="Printer">Printer/Scanner</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <div class="error-message" id="category-error">Please select a category</div>
+                </div>
+                
+                <div class="form-group conditional-field" id="others-container">
+                    <label for="others">If Other, please specify:*</label>
+                    <input type="text" id="others" placeholder="Type Here...">
+                    <div class="error-message" id="others-error">Please specify the category</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="model-name">Model/Type Name*</label>
+                    <input type="text" id="model-name" placeholder="Type Here..." required>
+                    <div class="error-message" id="model-error">Please enter the model/type name</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="amount">Amount*</label>
+                    <input type="number" id="amount" placeholder="Type Here..." min="1" required>
+                    <div class="error-message" id="amount-error">Please enter a valid amount (numbers only)</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="condition">Condition*</label>
+                    <select id="condition" required>
+                        <option value="" disabled selected>Select One</option>
+                        <option value="working">Working</option>
+                        <option value="partially-working">Partially Working</option>
+                        <option value="not-working">Not Working</option>
+                        <option value="unknown">Unknown</option>
+                    </select>
+                    <div class="error-message" id="condition-error">Please select the condition</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="defect">Defect/Issue (if any)</label>
+                    <input type="text" id="defect" placeholder="Type Here...">
+                </div>
+                
+                <button type="button" class="btn-continue">Continue</button>
+                <div class="loading" id="loading-indicator"></div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+        import { 
+            getFirestore, 
+            doc, 
+            getDoc, 
+            updateDoc, 
+            serverTimestamp,
+            collection,
+            getDocs,
+            setDoc 
+        } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDgoc4Zx064nL1iydJbccI692HDpu8gLLE",
+            authDomain: "capstone-project-312dc.firebaseapp.com",
+            projectId: "capstone-project-312dc",
+            storageBucket: "capstone-project-312dc.firebasestorage.app",
+            messagingSenderId: "82712440613",
+            appId: "1:82712440613:web:124a86e48a3b9c3e6bf4cc",
+            measurementId: "G-YFF9RVYJ9C",
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+    
+        async function getNextInventoryId() {
+            try {
+                // Query all inventory collection
+                const inventoryRef = collection(db, "inventory");
+                const querySnapshot = await getDocs(inventoryRef);
+                
+                let highestNum = 0;
+                
+        
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+               
+                    if (data.customId && data.customId.startsWith('I')) {
+                       
+                        const numStr = data.customId.substring(1);
+                        const num = parseInt(numStr);
+                      
+                        if (!isNaN(num) && num > highestNum) {
+                            highestNum = num;
+                        }
+                    }
+                });
+                
+                const nextNum = highestNum + 1;
+                return `I${nextNum.toString().padStart(2, '0')}`;
+            } catch (error) {
+                console.error("Error getting next inventory ID:", error);
+               
+                const timestamp = new Date().getTime();
+                return `I${timestamp}`;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check URL parameters for edit mode
+            const urlParams = new URLSearchParams(window.location.search);
+            const mode = urlParams.get('mode');
+            const inventoryId = sessionStorage.getItem('currentInventoryId');
+            
+            setTimeout(function() {
+                const contentElement = document.querySelector('.content');
+                if (contentElement) {
+                    contentElement.classList.add('active');
+                }
+            }, 300);
+
+            const categorySelect = document.getElementById('e-waste-category');
+            const othersField = document.getElementById('others');
+            const modelNameField = document.getElementById('model-name');
+            const amountField = document.getElementById('amount');
+            const conditionSelect = document.getElementById('condition');
+            const defectField = document.getElementById('defect');
+            const continueButton = document.querySelector('.btn-continue');
+            const othersFieldContainer = document.querySelector('.conditional-field');
+
+            if (othersFieldContainer) {
+                othersFieldContainer.style.display = 'none';
+            }
+
+            if (categorySelect) {
+                categorySelect.addEventListener('change', function() {
+                    if (this.value === 'other' && othersFieldContainer) {
+                        othersFieldContainer.style.display = 'block';
+                    } else if (othersFieldContainer) {
+                        othersFieldContainer.style.display = 'none';
+                        if (othersField) othersField.value = ''; 
+                    }
+                });
+            }
+
+            if (mode === 'edit' && inventoryId) {
+                loadExistingItemData(inventoryId);
+                
+                if (continueButton) {
+                    continueButton.textContent = 'Update Item';
+                }
+            }
+
+            if (continueButton) {
+                continueButton.addEventListener('click', function() {
+                    // Form validation
+                    if (!validateForm()) {
+                        return;
+                    }
+
+                    onAuthStateChanged(auth, (user) => {
+                        if (user) {
+                            handleInventoryItem(user.uid);
+                        } else {
+                            alert('You must be logged in to add inventory items.');
+                            window.location.href = 'login.html'; 
+                        }
+                    });
+                });
+            }
+
+            async function loadExistingItemData(itemId) {
+                try {
+                    const itemRef = doc(db, "inventory", itemId);
+                    const itemSnap = await getDoc(itemRef);
+                    
+                    if (itemSnap.exists()) {
+                        const itemData = itemSnap.data();
+                        
+                        if (categorySelect && itemData.category) {
+                            categorySelect.value = itemData.category;
+                            
+                            if (itemData.category === "other" && othersFieldContainer) {
+                                othersFieldContainer.style.display = 'block';
+                                if (othersField) othersField.value = itemData.others || '';
+                            }
+                        }
+                        
+                        if (modelNameField && itemData.model) modelNameField.value = itemData.model;
+                        if (amountField && itemData.amount) amountField.value = itemData.amount;
+                        if (conditionSelect && itemData.condition) conditionSelect.value = itemData.condition;
+                        if (defectField && itemData.defect) defectField.value = itemData.defect;
+                        
+                        console.log("Item data loaded successfully for editing");
+                    } else {
+                        console.warn("No such document found for editing");
+                    }
+                } catch (error) {
+                    console.error("Error loading item data:", error);
+                    alert('Failed to load item details. Please try again.');
+                }
+            }
+
+            function validateForm() {
+                if (!categorySelect || !categorySelect.value) {
+                    alert('Please select an e-waste category.');
+                    return false;
+                }
+
+                if (categorySelect.value === 'other' && (!othersField || !othersField.value.trim())) {
+                    alert('Please specify the e-waste category.');
+                    return false;
+                }
+
+                if (!modelNameField || !modelNameField.value.trim()) {
+                    alert('Please enter the model/type name.');
+                    return false;
+                }
+
+                if (!amountField || !amountField.value.trim() || isNaN(amountField.value)) {
+                    alert('Please enter a valid amount (numbers only).');
+                    return false;
+                }
+
+                if (!conditionSelect || !conditionSelect.value) {
+                    alert('Please select the condition of the item.');
+                    return false;
+                }
+
+                return true;
+            }
+
+            async function handleInventoryItem(userId) {
+                try {
+              
+                    const inventoryData = {
+                        uid: userId,
+                        category: categorySelect.value,
+                        others: categorySelect.value === 'other' ? othersField.value : '',
+                        model: modelNameField.value,
+                        amount: parseInt(amountField.value),
+                        condition: conditionSelect.value,
+                        defect: defectField.value || '',
+                        updatedAt: serverTimestamp()
+                    };
+
+                    if (mode === 'edit' && inventoryId) {
+                        // Update existing document
+                        const itemRef = doc(db, "inventory", inventoryId);
+                        await updateDoc(itemRef, inventoryData);
+                        console.log("Document updated successfully");
+                    } else {
+
+                        const customId = await getNextInventoryId();
+                        if (!customId) {
+                            throw new Error("Failed to generate an inventory ID");
+                        }
+               
+                        inventoryData.customId = customId;
+                        inventoryData.additionalNotes = ''; 
+                        inventoryData.status = 'Pending'; 
+                        inventoryData.createdAt = serverTimestamp();
+                        
+           
+                        const inventoryDocRef = doc(db, "inventory", customId);
+                        await setDoc(inventoryDocRef, inventoryData);
+                        
+              
+                        sessionStorage.setItem('currentInventoryId', customId);
+                        console.log("Document added successfully with ID:", customId);
+                    }
+                    
+                    window.location.href = 'additional_note.html';
+                } catch (error) {
+                    console.error("Error handling inventory item: ", error);
+                    alert('Failed to save inventory item. Please try again.');
+                }
+            }
+        });
+    </script>
+</body>
+</html>

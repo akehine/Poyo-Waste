@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=MuseoModerno:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+      rel="stylesheet"
+    />
+    <title>Poyo Waste</title>
+    <style>
+      body,
+      html {
+        margin: 0 auto;
+        overflow: hidden;
+        padding: 0;
+        height: 100%;
+        font-family: "Poppins", sans-serif;
+        background-image: url(user-image/back.png);
+      }
+
+      .container {
+        position: relative;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .header {
+        padding: 40px;
+        display: flex;
+        align-items: center;
+        position: relative;
+        animation: slideDownHeader 0.8s ease-out forwards;
+        justify-content: center;
+      }
+
+      .back-button {
+        width: 40px;
+        height: 40px;
+        background-color: white;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        position: absolute;
+        left: 20px;
+      }
+
+      .back-arrow {
+        width: 20px;
+        height: 20px;
+      }
+
+      .chat-title {
+        left: 0;
+        right: 0;
+        text-align: center;
+        font-size: 24px;
+        font-weight: 400;
+        margin-left: 10px;
+        color: #212521;
+      }
+
+      .content {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        max-height: 78vh;
+        background: white;
+        border-radius: 50px 50px 0 0;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        animation: slideUpInput 1s ease-out forwards;
+      }
+      #chatbox {
+        flex-grow: 1;
+        overflow-y: scroll;
+        padding: 10px;
+        margin-bottom: 15px;
+        text-align: left;
+      }
+      .message {
+        max-width: 80%;
+      }
+
+      .user-message {
+        margin-left: auto;
+        background-color: #e3f2fd;
+        padding: 10px 15px;
+        border-radius: 18px 18px 0 18px;
+        margin-bottom: 20px;
+      }
+      .bot-message {
+        margin-right: auto;
+        background-color: #f0f0f0;
+        padding: 10px 15px;
+        border-radius: 18px 18px 18px 0;
+      }
+      .message-content {
+        word-wrap: break-word;
+      }
+      .message-image {
+        max-width: 250px;
+        max-height: 250px;
+        border-radius: 10px;
+        margin-top: 8px;
+      }
+      .input-area {
+        display: flex;
+        padding: 20px;
+        position: fixed;
+        bottom: 0px;
+        left: 0;
+        right: 0;
+        background-color: #f8f8f8;
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+        animation: slideUpInput 0.8s ease-out forwards;
+      }
+      .image-btn {
+        width: 45px;
+        height: 45px;
+        background-color: white;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-right: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+      }
+      #file-input {
+        display: none;
+      }
+      #user-input {
+        flex-grow: 1;
+        padding: 10px 15px;
+        border-radius: 20px;
+        border: 1px solid #dddddd;
+        background-color: transparent;
+        margin-right: 10px;
+        font-size: 16px;
+      }
+      #user-input:focus {
+        outline: none;
+      }
+
+      .send-btn {
+        width: 50px;
+        height: 50px;
+        background-color: #4caf50;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+      }
+
+      .send-arrow {
+        color: white;
+        font-size: 20px;
+      }
+
+      .image-preview-container {
+        display: none;
+        position: absolute;
+        bottom: 80px;
+        left: 20px;
+        right: 20px;
+        background-color: white;
+        padding: 15px;
+        border-radius: 15px;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .image-preview {
+        max-width: 100%;
+        max-height: 200px;
+        border-radius: 10px;
+      }
+
+      .cancel-upload {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: rgba(0, 0, 0, 0.5);
+        color: white;
+        border-radius: 50%;
+        width: 25px;
+        height: 25px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+      }
+
+      .typing-indicator {
+        margin-right: auto;
+        background-color: #f0f0f0;
+        padding: 10px 15px;
+        border-radius: 18px 18px 18px 0;
+        display: flex;
+        align-items: center;
+      }
+      .typing-dot {
+        height: 8px;
+        width: 8px;
+        background-color: #777;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 4px;
+        animation: typing-dot 1.5s infinite ease-in-out;
+      }
+      .typing-dot:nth-child(1) {
+        animation-delay: 0s;
+      }
+      .typing-dot:nth-child(2) {
+        animation-delay: 0.3s;
+      }
+      .typing-dot:nth-child(3) {
+        animation-delay: 0.6s;
+        margin-right: 0;
+      }
+      @keyframes typing-dot {
+        0%,
+        60%,
+        100% {
+          transform: translateY(0);
+        }
+        30% {
+          transform: translateY(-5px);
+        }
+      }
+
+      .message-with-avatar {
+        display: flex;
+        align-items: flex-end;
+        margin-bottom: 20px;
+      }
+
+      .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 10px;
+        background-size: cover;
+        background-position: center;
+        flex-shrink: 0;
+      }
+
+      .bot-avatar {
+        background-image: url("user-image/tomatopfp1.png");
+      }
+
+      @keyframes slideDownHeader {
+        from {
+          transform: translateY(-100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      @keyframes slideUpInput {
+        from {
+          transform: translateY(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      .action-button {
+        display: block;
+        margin-top: 20px;
+        padding: 8px 16px;
+        background-image: linear-gradient(to right, #79c769, #e1e690);
+        color: white;
+        border: none;
+        border-radius: 18px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        text-align: center;
+        text-decoration: none;
+      }
+
+      .action-button:hover {
+        background-color: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <div class="back-button" id="back-btn">
+          <svg
+            class="back-arrow"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+          </svg>
+        </div>
+        <div class="chat-title">Chat with Poyo</div>
+      </div>
+      <div class="content">
+        <div id="chatbox"></div>
+      </div>
+
+      <div class="image-preview-container" id="image-preview-container">
+        <div class="cancel-upload" onclick="cancelUpload()">✕</div>
+        <img id="image-preview" class="image-preview" />
+      </div>
+
+      <div class="input-area">
+        <label for="file-input" class="image-btn">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+            <circle cx="8.5" cy="8.5" r="1.5" />
+            <polyline points="21 15 16 10 5 21" />
+          </svg>
+        </label>
+        <input type="file" id="file-input" accept="image/*" />
+        <input type="text" id="user-input" placeholder="Type a message..." />
+        <div class="send-btn" onclick="sendMessage()">
+          <svg
+            class="send-arrow"
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="white"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const backButton = document.getElementById("back-btn");
+
+        if (backButton) {
+          backButton.addEventListener("click", function () {
+            window.location.href = "main_page.html";
+          });
+        }
+      });
+
+      let selectedImage = null;
+      let isProcessing = false;
+
+      // Handle file selection
+      document
+        .getElementById("file-input")
+        .addEventListener("change", function (event) {
+          const file = event.target.files[0];
+          if (file && file.type.startsWith("image/")) {
+            selectedImage = file;
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+              const previewContainer = document.getElementById(
+                "image-preview-container"
+              );
+              const preview = document.getElementById("image-preview");
+
+              preview.src = e.target.result;
+              previewContainer.style.display = "block";
+            };
+
+            reader.readAsDataURL(file);
+          }
+        });
+
+      function cancelUpload() {
+        selectedImage = null;
+        document.getElementById("image-preview-container").style.display =
+          "none";
+        document.getElementById("file-input").value = "";
+      }
+
+      // Function to show typing indicator
+      function showTypingIndicator() {
+        if (isProcessing) return;
+
+        isProcessing = true;
+        let chatbox = document.getElementById("chatbox");
+
+        // Create wrapper with avatar
+        let messageWrapper = document.createElement("div");
+        messageWrapper.className = "message-with-avatar";
+        messageWrapper.id = "typing-indicator-wrapper";
+
+        let avatarElement = document.createElement("div");
+        avatarElement.className = "avatar bot-avatar";
+
+        // Create typing indicator element
+        let typingIndicator = document.createElement("div");
+        typingIndicator.className = "message typing-indicator";
+        typingIndicator.id = "typing-indicator";
+
+        // Create dots
+        for (let i = 0; i < 3; i++) {
+          let dot = document.createElement("div");
+          dot.className = "typing-dot";
+          typingIndicator.appendChild(dot);
+        }
+
+        messageWrapper.appendChild(avatarElement);
+        messageWrapper.appendChild(typingIndicator);
+        chatbox.appendChild(messageWrapper);
+        chatbox.scrollTop = chatbox.scrollHeight;
+      }
+
+      function hideTypingIndicator() {
+        isProcessing = false;
+        let typingIndicatorWrapper = document.getElementById(
+          "typing-indicator-wrapper"
+        );
+        if (typingIndicatorWrapper) {
+          typingIndicatorWrapper.remove();
+        }
+      }
+
+      async function sendMessage() {
+        let userInput = document.getElementById("user-input").value.trim();
+
+        if (!userInput && !selectedImage) return;
+
+        if (isProcessing) return;
+
+        let chatbox = document.getElementById("chatbox");
+
+        let messageElement = document.createElement("div");
+        messageElement.className = "message user-message";
+
+        let messageContent = document.createElement("div");
+        messageContent.className = "message-content";
+
+        if (userInput) {
+          messageContent.textContent = userInput;
+        }
+
+        messageElement.appendChild(messageContent);
+
+        // Add image if selected
+        if (selectedImage) {
+          const reader = new FileReader();
+
+          reader.onload = function (e) {
+            const img = document.createElement("img");
+            img.src = e.target.result;
+            img.className = "message-image";
+            messageElement.appendChild(img);
+
+            chatbox.appendChild(messageElement);
+
+            showTypingIndicator();
+
+            callChatbotAPI(userInput, img.src);
+          };
+
+          reader.readAsDataURL(selectedImage);
+
+          selectedImage = null;
+          document.getElementById("image-preview-container").style.display =
+            "none";
+        } else {
+          chatbox.appendChild(messageElement);
+
+          showTypingIndicator();
+
+          callChatbotAPI(userInput);
+        }
+
+        // Clear input
+        document.getElementById("user-input").value = "";
+        document.getElementById("file-input").value = "";
+
+        chatbox.scrollTop = chatbox.scrollHeight;
+      }
+
+      async function callChatbotAPI(userInput, imageUrl = null) {
+        const API_KEY =
+          "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";
+        const API_URL = "https://openrouter.ai/api/v1/chat/completions";
+
+        let messages = [
+          {
+            role: "system",
+            content:
+              "You are Poyo Assistant, an AI assistant for an E-Waste Management System. You are supposed to sound nice and professional. Help users with e-waste disposal, pickup, and recycling. If users send images of electronic devices, help identify the category including Mobile Phones, Laptops/Computers ,Televisions/Monitors ,Printers/Scanners ,Home Appliances, Batteries and provide recycling guidance. Keep responses short and to the point.Avoid asking about scheduling pickups unless specifically requested. If Kirby appears in an image, you have to reply Poyo! It's me :3 or something similar cute way. If Kirby pattern is on electronic device, after introducing yourself(as Kirby/Poyo), continue to identify the electronic device including the model or condition, and answer user prompt.",
+          },
+        ];
+
+        // If user input exists, add it to the messages array
+        if (userInput) {
+          messages.push({ role: "user", content: userInput });
+        }
+
+        if (imageUrl) {
+          messages.push({
+            role: "user",
+            content: [
+              {
+                type: "text",
+                text:
+                  userInput ||
+                  "Identify this e-waste item and suggest how to recycle it.",
+              },
+              {
+                type: "image_url",
+                image_url: { url: imageUrl },
+              },
+            ],
+          });
+        }
+
+        try {
+          let response = await fetch(API_URL, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${API_KEY}`,
+            },
+            body: JSON.stringify({
+              model: "opengvlab/internvl3-14b:free",
+              extra_headers: {
+                "HTTP-Referer": "<YOUR_SITE_URL>",
+                "X-Title": "E-Waste AI Chatbot - Kirby",
+              },
+              messages: messages,
+            }),
+          });
+
+          let data = await response.json();
+
+          // Hide typing indicator
+          hideTypingIndicator();
+
+          let chatbox = document.getElementById("chatbox");
+          let messageWrapper = document.createElement("div");
+          messageWrapper.className = "message-with-avatar";
+
+          let avatarElement = document.createElement("div");
+          avatarElement.className = "avatar bot-avatar";
+
+          let botMessageElement = document.createElement("div");
+          botMessageElement.className = "message bot-message";
+
+          if (data.choices && data.choices.length > 0) {
+            let aiResponse = data.choices[0].message.content;
+            botMessageElement.textContent = aiResponse;
+
+            let buttonElement = document.createElement("a");
+            buttonElement.className = "action-button";
+            buttonElement.textContent = "Schedule Pickup";
+            buttonElement.href = "bucket.html";
+            botMessageElement.appendChild(buttonElement);
+          } else {
+            botMessageElement.textContent =
+              "Sorry, I couldn't process that request.";
+          }
+
+          messageWrapper.appendChild(avatarElement);
+          messageWrapper.appendChild(botMessageElement);
+          chatbox.appendChild(messageWrapper);
+          chatbox.scrollTop = chatbox.scrollHeight;
+        } catch (error) {
+          // Hide typing indicator
+          hideTypingIndicator();
+
+          let chatbox = document.getElementById("chatbox");
+          let botMessageElement = document.createElement("div");
+          botMessageElement.className = "message bot-message";
+          botMessageElement.textContent =
+            "Error processing request. Please try again later.";
+
+          chatbox.appendChild(botMessageElement);
+          chatbox.scrollTop = chatbox.scrollHeight;
+          console.error("Error:", error);
+        }
+      }
+
+      document
+        .getElementById("user-input")
+        .addEventListener("keypress", function (event) {
+          if (event.key === "Enter") {
+            sendMessage();
+          }
+        });
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const header = document.querySelector(".header");
+        const inputArea = document.querySelector(".input-area");
+
+        header.style.animation = "none";
+        inputArea.style.animation = "none";
+
+        void header.offsetWidth;
+        void inputArea.offsetWidth;
+
+        // Reapply the animations
+        header.style.animation = "slideDownHeader 0.8s ease-out forwards";
+        inputArea.style.animation = "slideUpInput 0.8s ease-out forwards";
+      });
+    </script>
+  </body>
+</html>

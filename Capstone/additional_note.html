@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=MuseoModerno:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <title>Poyo Waste</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+        
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+        
+        .container {
+            position: relative;
+            height: 100vh;
+            background-image: linear-gradient(to right bottom, #79c769, #a0d172, #c2dc7f, #e1e690, #fdf1a4);
+            overflow: hidden; 
+        }
+        
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+        }
+        
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            border: none;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .back-btn svg {
+            width: 24px;
+            height: 24px;
+            stroke: #333;
+        }
+        
+        .page-title {
+            color: white;
+            text-align: center;
+            flex-grow: 1;
+            font-size: 24px;
+            margin-left: 0;
+        }
+        .content {
+            position: absolute;
+            top: 90px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: white;
+            border-top-left-radius: 35px;
+            border-top-right-radius: 35px;
+            overflow-y: auto;
+            padding: 30px;
+            box-shadow: 0 -4px 6px rgba(0,0,0,0.1);
+            transform: translateY(100%); 
+            transition: transform 1.5s cubic-bezier(0.16, 1, 0.3, 1); 
+        }
+        
+        .content.active {
+            transform: translateY(0); 
+        }
+        
+        .item-card {
+            background-color: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: relative;
+        }
+        
+        .item-card::before {
+            content: "";
+            position: absolute;
+            top: 25px;
+            bottom: 25px;
+            left: 0;
+            width: 4px;
+            background-color: #4b6e2e;
+            border-radius: 0 2px 2px 0;
+        }
+        
+        .item-title {
+            color: #4b6e2e;
+            margin-bottom: 15px;
+            font-size: 24px;
+            font-weight: 600;
+        }
+        
+        .item-detail {
+            margin-bottom: 10px;
+            color: #333;
+            font-size: 16px;
+        }
+        
+        .notes-label {
+            margin-bottom: 15px;
+            font-size: 18px;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .notes-input {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            background-color: #F0F0F0;
+            border-radius: 25px;
+            font-size: 16px;
+            color: #777;
+            min-height: 100px;
+            resize: none;
+            margin-bottom: 30px;
+        }
+        
+        .btn-add {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: #4b6e2e;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .loading::after {
+            content: "";
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(75, 110, 46, 0.3);
+            border-radius: 50%;
+            border-top-color: #4b6e2e;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <button class="back-btn" id="back-button">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M15 18l-6-6 6-6"/>
+                </svg>
+            </button>
+            <h1 class="page-title">Confirm Item</h1>
+        </div>
+        
+        <div class="content">
+            <div class="item-card" id="item-details">
+                <h2 class="item-title" id="category-title">Loading...</h2>
+                <p class="item-detail" id="model-detail">Model Name: Loading...</p>
+                <p class="item-detail" id="amount-detail">Amount: Loading...</p>
+                <p class="item-detail" id="condition-detail">Condition: Loading...</p>
+                <p class="item-detail" id="defect-detail">Defect: Loading...</p>
+            </div>
+            
+            <h3 class="notes-label">Additional Notes:</h3>
+            <textarea class="notes-input" id="additional-notes" placeholder="Type Here..."></textarea>
+            
+            <button class="btn-add" id="add-item-btn">Add Item</button>
+            <div class="loading" id="loading-indicator"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+        import { 
+            getFirestore, 
+            doc, 
+            getDoc, 
+            updateDoc, 
+            serverTimestamp, 
+            collection, 
+            getDocs,
+            setDoc 
+        } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+    
+        const firebaseConfig = {
+            apiKey: "AIzaSyDgoc4Zx064nL1iydJbccI692HDpu8gLLE",
+            authDomain: "capstone-project-312dc.firebaseapp.com",
+            projectId: "capstone-project-312dc",
+            storageBucket: "capstone-project-312dc.firebasestorage.app",
+            messagingSenderId: "82712440613",
+            appId: "1:82712440613:web:124a86e48a3b9c3e6bf4cc",
+            measurementId: "G-YFF9RVYJ9C",
+        };
+    
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+    
+        document.addEventListener('DOMContentLoaded', function() {
+          const backButton = document.getElementById('back-button');
+            
+          backButton.addEventListener('click', function() {
+            // Make sure we're passing the inventoryId in session storage
+            // Session storage should already have currentInventoryId set
+            window.location.href = 'add_item.html?mode=edit';
+          });
+          
+          backButton.addEventListener('touchstart', function() {
+            window.location.href = 'add_item.html?mode=edit';
+          });
+        });
+    
+        // Function to get the next inventory ID
+        async function getNextInventoryId() {
+            try {
+                // Query all inventory collection
+                const inventoryRef = collection(db, "inventory");
+                const querySnapshot = await getDocs(inventoryRef);
+                
+                let highestNum = 0;
+                
+                // Loop through all inventory items to find highest number
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                 
+                    if (data.customId && data.customId.startsWith('I')) {
+                     
+                        const numStr = data.customId.substring(1);
+                        const num = parseInt(numStr);
+            
+                        if (!isNaN(num) && num > highestNum) {
+                            highestNum = num;
+                        }
+                    }
+                });
+                
+
+                const nextNum = highestNum + 1;
+                return `I${nextNum.toString().padStart(2, '0')}`;
+            } catch (error) {
+                console.error("Error getting next inventory ID:", error);
+              
+                const timestamp = new Date().getTime();
+                return `I${timestamp}`;
+            }
+        }
+
+        async function addNewInventoryItem(userData) {
+            try {
+            
+                const customId = await getNextInventoryId();
+                if (!customId) {
+                    throw new Error("Failed to generate an inventory ID");
+                }
+                
+       
+                const inventoryData = {
+                    customId: customId,
+                    uid: currentUser.uid,
+                    category: userData.category,
+                    model: userData.model,
+                    amount: userData.amount,
+                    condition: userData.condition,
+                    defect: userData.defect,
+                    status: "Pending",
+                    createdAt: serverTimestamp()
+                };
+                
+                
+                const inventoryDocRef = doc(db, "inventory", customId);
+                await setDoc(inventoryDocRef, inventoryData);
+                
+                
+                sessionStorage.setItem('currentInventoryId', customId);
+                return customId;
+            } catch (error) {
+                console.error("Error adding inventory item: ", error);
+                throw error;
+            }
+        }
+    
+        
+        document.addEventListener('DOMContentLoaded', function() {
+          
+            setTimeout(function() {
+                // Add the active class to trigger the animation
+                document.querySelector('.content').classList.add('active');
+            }, 300);
+    
+            // Get DOM elements
+            const backButton = document.getElementById('back-button');
+            const categoryTitle = document.getElementById('category-title');
+            const modelDetail = document.getElementById('model-detail');
+            const amountDetail = document.getElementById('amount-detail');
+            const conditionDetail = document.getElementById('condition-detail');
+            const defectDetail = document.getElementById('defect-detail');
+            const additionalNotesField = document.getElementById('additional-notes');
+            const addItemBtn = document.getElementById('add-item-btn');
+            const loadingIndicator = document.getElementById('loading-indicator');
+    
+         
+            const inventoryId = sessionStorage.getItem('currentInventoryId');
+            
+           
+            if (!inventoryId) {
+                alert('No inventory item found. Please add an item first.');
+                window.location.href = 'add_item.html';
+                return;
+            }
+    
+      
+            loadItemDetails(inventoryId);
+    
+       
+            addItemBtn.addEventListener('click', function() {
+                submitItemWithNotes(inventoryId);
+            });
+    
+         
+            async function loadItemDetails(itemId) {
+                try {
+                    const itemRef = doc(db, "inventory", itemId);
+                    const itemSnap = await getDoc(itemRef);
+                    
+                    if (itemSnap.exists()) {
+                        const itemData = itemSnap.data();
+                        
+            
+                        let categoryName = "";
+                        if (itemData.category === "other") {
+                            categoryName = itemData.others || "Other";
+                        } else if (itemData.category === "computers") {
+                            categoryName = "Laptop";
+                        } else if (itemData.category === "mobile-phones") {
+                            categoryName = "Mobile Phone";
+                        } else if (itemData.category === "televisions") {
+                            categoryName = "Television/Monitor";
+                        } else if (itemData.category === "appliances") {
+                            categoryName = "Home Appliance";
+                        } else if (itemData.category === "batteries") {
+                            categoryName = "Battery";
+                        } else if (itemData.category === "printer") {
+                            categoryName = "Printer/Scanner";
+                        } else {
+                            categoryName = itemData.category.charAt(0).toUpperCase() + itemData.category.slice(1);
+                        }
+                        categoryTitle.textContent = categoryName;
+                        
+                     
+                        modelDetail.textContent = `Model Name: ${itemData.model || "None"}`;
+                        amountDetail.textContent = `Amount: ${itemData.amount || "0"}`;
+                        conditionDetail.textContent = `Condition: ${formatCondition(itemData.condition) || "None"}`;
+                        defectDetail.textContent = `Defect: ${itemData.defect || "None"}`;
+                        
+                      
+                        if (itemData.additionalNotes) {
+                            additionalNotesField.value = itemData.additionalNotes;
+                        }
+                    } else {
+                        console.error("No such document!");
+                        alert('Item not found. Please try again.');
+                        window.location.href = 'add_item.html';
+                    }
+                } catch (error) {
+                    console.error("Error getting document:", error);
+                    alert('Failed to load item details. Please try again.');
+                }
+            }
+    
+    
+            function formatCondition(condition) {
+                if (!condition) return "None";
+                
+                switch(condition) {
+                    case "working":
+                        return "Working";
+                    case "partially-working":
+                        return "Partially Working";
+                    case "not-working":
+                        return "Not Working";
+                    case "unknown":
+                        return "Unknown";
+                    default:
+                        return condition.charAt(0).toUpperCase() + condition.slice(1);
+                }
+            }
+    
+        
+            async function submitItemWithNotes(itemId) {
+                // Check if user is authenticated
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        try {
+                          
+                            loadingIndicator.style.display = 'block';
+                            
+                        
+                            const inventoryRef = doc(db, "inventory", itemId);
+                            await updateDoc(inventoryRef, {
+                                additionalNotes: additionalNotesField.value.trim(),
+                                updatedAt: serverTimestamp()
+                            });
+                            
+                   
+                            sessionStorage.removeItem('currentInventoryId');
+                            
+                            window.location.href = 'bucket.html';
+                        } catch (error) {
+                            console.error("Error updating inventory item: ", error);
+                            alert('Failed to save item. Please try again.');
+                            loadingIndicator.style.display = 'none';
+                        }
+                    } else {
+                 
+                        alert('You must be logged in to update inventory items.');
+                        window.location.href = 'login.html'; 
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

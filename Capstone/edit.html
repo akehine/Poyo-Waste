@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-storage-compat.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=edit" />
+
+    <style>
+
+    @import url('https://fonts.googleapis.com/css2?family=MuseoModerno:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+    body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-image: url(user-image/back.png);
+    color: #333;
+    }
+
+    .header {
+        padding: 50px 0;
+        text-align: center;
+        border-radius: 0; 
+    }
+
+    .header-text {
+        margin-top: 5px;
+        font-size: 20px;
+        color: white;
+    }
+
+    .form-container {
+    padding: 40px;
+    background-color: white;
+    border-radius: 30px 30px 0 0;   
+    margin-top: 40px; 
+    opacity: 0;
+    transform: translateY(200px);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    animation: swipeUp 1s ease-out forwards;
+    height: 520px;
+    }
+
+    @keyframes swipeUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    }
+
+    h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 28px;
+    font-weight: normal;
+    }
+
+    .top-section{
+        display: flex;
+        align-items: center;
+        justify-content:flex-start;
+        max-height: 100px;
+        margin-left: 20px;
+    }
+
+    .back-button {
+        width: 40px;
+        height: 40px;
+        background-color: white;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        cursor: pointer;
+        left: 20px;
+        margin-right: 20px;
+    }
+
+    .back-arrow {
+        width: 20px;
+        height: 20px;
+    }
+
+    .header-text span{
+        color: #212521;
+    }
+
+
+    input, select {
+    width: 100%;
+    padding: 20px;
+    margin-bottom: 40px;
+    border: none;
+    border-radius: 15px;
+    background-color: #f0f0f0;
+    font-size: 16px;
+    box-sizing: border-box;
+    
+    }
+
+    select {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23131313%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 12px;
+    }
+
+    button {
+    background-color: #4b7a30;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 20px;
+    width: 100%;
+    font-size: 16px;
+    cursor: pointer;
+    display: block;
+    }
+
+
+    @media screen and (max-width: 390px) {
+    .container {
+        width: 100%;
+        height: 100vh;
+    }
+    }
+
+    .profile-pic{
+        display: flex;
+        justify-content: center;
+    }
+
+    .profile-pic img{
+        width: 150px;
+        height: 150px;
+        margin: 10px;
+        border-radius: 100px;
+        cursor: pointer;
+        object-fit: cover;
+    }
+
+    .profile-pic-wrapper {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+    }
+
+    span {
+        position: absolute;
+        bottom: 8px;
+        right: 10px;
+        background-color: #fff;
+        border-radius: 50%;
+        padding: 5px;
+        color: #333;
+        font-size: 14px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    }
+
+    .loading {
+        display: none;
+        text-align: center;
+        margin-top: 10px;
+        color: #4b7a30;
+    }
+    </style>
+    
+</head>
+<body>
+
+    <div class="top-section">
+        <div class="back-button" id="back-button">
+            <svg class="back-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+        </div>
+        <div class="header">
+            <div class="header-content">
+                <div class="header-text">
+                    <span>Edit Profile</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-pic">
+        <div class="profile-pic-wrapper" onclick="document.getElementById('profilePicInput').click();">
+            <img id="profilePic" src="user-image/p.svg">
+                <span class="material-symbols-outlined">
+                    edit
+                    </span>
+        </div>
+        <input type="file" id="profilePicInput" style="display: none;" accept="image/*">
+    </div>    
+    <div id="loadingProfilePic" class="loading">Uploading image...</div>
+
+    <div class="container">
+        <div class="form-container">
+            <form id="editProfileForm">
+            <label for="fullname">Full Name:</label>
+            <input type="text" id="fullname" name="fullname" required>
+
+            <label for="role">Role:</label>
+                <div class="form-group">
+                    <select id="role" name="role" required>
+                        <option value="" disabled selected>Role</option>
+                        <option value="Product Manager">Product Manager</option>
+                        <option value="Operations Manager">Operations Manager</option>
+                        <option value="Warehouse Associate">Warehouse Associate</option>
+                        <option value="HR Specialist">HR Specialist</option>
+                        <option value="Marketing Manager">Marketing Manager</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+            <label for="phone">Phone Number:</label>
+            <input type="tel" id="phone" name="phone" required>
+
+            <button type="submit" id="saveButton">Save</button>
+        </form>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDgoc4Zx064nL1iydJbccI692HDpu8gLLE",
+            authDomain: "capstone-project-312dc.firebaseapp.com",
+            projectId: "capstone-project-312dc",
+            storageBucket: "capstone-project-312dc.firebasestorage.app",
+            messagingSenderId: "82712440613",
+            appId: "1:82712440613:web:124a86e48a3b9c3e6bf4cc",
+            measurementId: "G-YFF9RVYJ9C",
+        };
+    
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+        
+        let profileImageUrl = null;
+    
+        document.addEventListener("DOMContentLoaded", async function () {
+            auth.onAuthStateChanged(async (user) => {
+                if (user) {
+                    try {
+                        const doc = await db.collection("users").doc(user.uid).get();
+                        if (doc.exists) {
+                            const userData = doc.data();
+                            
+                            document.getElementById("fullname").value = userData.fullname || "";
+                            document.getElementById("role").value = userData.role || "";
+                            document.getElementById("phone").value = userData.phone_number || "";
+    
+                            if (userData.profile) {
+                                document.getElementById("profilePic").src = userData.profile;
+                                profileImageUrl = userData.profile;
+                            }
+                        }
+                    } catch (error) {
+                        console.error("Error fetching user data:", error);
+                    }
+                } else {
+                    // Not logged in, redirect to login page
+                    window.location.href = "login.html";
+                }
+            });
+        });
+
+        document.getElementById("profilePicInput").addEventListener("change", async function (event) {
+            const user = auth.currentUser;
+            if (user && event.target.files.length > 0) {
+                const file = event.target.files[0];
+                
+                const loadingElement = document.getElementById("loadingProfilePic");
+                loadingElement.style.display = "block";
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById("profilePic").src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+                
+                try {
+                    
+                    profileImageUrl = await fileToBase64(file);
+                    
+                    
+                    loadingElement.style.display = "none";
+                } catch (error) {
+                    console.error("Error processing profile picture:", error);
+                    loadingElement.style.display = "none";
+                    alert("Failed to process profile picture. Please try again.");
+                }
+            }
+        });
+        
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        }
+    
+        document.getElementById("editProfileForm").addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const user = auth.currentUser;
+            
+            if (user) {
+                const saveButton = document.getElementById("saveButton");
+                saveButton.disabled = true;
+                saveButton.textContent = "Saving...";
+    
+                const updatedData = {
+                    fullname: document.getElementById("fullname").value,
+                    role: document.getElementById("role").value,
+                    phone_number: document.getElementById("phone").value,
+                };
+                
+                if (profileImageUrl) {
+                    updatedData.profile = profileImageUrl;
+                }
+    
+                try {
+                    await db.collection("users").doc(user.uid).update(updatedData);
+                    alert("Profile updated successfully!");
+                    window.location.href = "profile.html";
+                } catch (error) {
+                    console.error("Error updating profile:", error);
+                    alert("Error updating profile: " + error.message);
+                    saveButton.disabled = false;
+                    saveButton.textContent = "Save";
+                }
+            }
+        });
+
+        document.getElementById("back-button").addEventListener("click", function () {
+            window.location.href = "profile.html"; 
+        });
+
+    </script>
+    
+</body>
+</html>

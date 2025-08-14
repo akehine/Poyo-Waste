@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tracking</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/11.4.0/firebase-app.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/11.4.0/firebase-firestore.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-auth-compat.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link
+      href="https://fonts.googleapis.com/css2?family=MuseoModerno:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+
+@import url('https://fonts.googleapis.com/css2?family=MuseoModerno:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+      body {
+        background-image: url(user-image/back.png);
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      
+      .slider-container {
+        display: flex;
+        position: relative;
+        background-color: #fff;
+        border-radius: 30px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+        margin: 20px;
+      }
+
+      .slider-button {
+        flex: 1;
+        padding: 10px;
+        text-align: center;
+        font-size: 12px;
+        font-weight: 400;
+        cursor: pointer;
+        background: none;
+        border: none;
+        transition: color 0.3s ease;
+        position: relative;
+        z-index: 2;
+      }
+
+      .slider-button.active {
+        color: white;
+      }
+
+      .slider-indicator {
+        position: absolute;
+        height: 100%;
+        width: 50%;
+        background-color: #4caf50;
+        border-radius: 30px;
+        transition: transform 0.3s ease;
+        z-index: 1;
+      }
+
+      .slider-container[data-active="past"] .slider-indicator {
+        transform: translateX(100%);
+      }
+      .delivery-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+      }
+      .delivery-box {
+        background-color: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s;
+        border-left: solid 1px #2e7d32;
+      }
+      .delivery-box:hover {
+        transform: translateY(-5px);
+      }
+      .delivery-id {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #333;
+      }
+      .delivery-status {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: bold;
+        margin-bottom: 15px;
+      }
+      .status-waiting {
+        background-color: #fff9c4;
+        color: #f57f17;
+      }
+      .status-ondelivery {
+        background-color: #bbdefb;
+        color: #1565c0;
+      }
+      .status-delivered {
+        background-color: #c8e6c9;
+        color: #2e7d32;
+      }
+      .delivery-detail {
+        display: flex;
+        margin-bottom: 8px;
+      }
+      .detail-label {
+        min-width: 120px;
+        color: #757575;
+      }
+      .detail-value {
+        font-weight: 500;
+        color: #333;
+        margin-left: 5px;
+      }
+      .no-deliveries {
+        text-align: center;
+        grid-column: 1 / -1;
+        padding: 40px;
+        color: #757575;
+        font-size: 18px;
+      }
+      .loading {
+        text-align: center;
+        grid-column: 1 / -1;
+        padding: 40px;
+        color: #757575;
+      }
+
+
+      .back-arrow {
+        width: 20px;
+        height: 20px;
+        color: #4e703a;
+      }
+
+      .back-button {
+        width: 40px;
+        height: 40px;
+        background-color: white;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        position: absolute;
+        left: 40px;
+        border: none;
+      }
+
+      .bottom-nav {
+        position: fixed; 
+        bottom: 40px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: white;
+        border-radius: 30px;
+        padding: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        width: 90%;
+        z-index: 20;
+    }
+
+
+      .nav-items-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        padding: 0 10px;
+      }
+
+      .nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border:none;
+        color: #888;
+        transition: color 0.3s ease;
+        opacity: 0.6;
+        width: 50px;
+        text-align: center;
+        padding: 12px;
+        border-radius: 30px;
+
+      }
+
+      .header-content{
+        font-weight: 400;
+      }
+
+      .nav-item:hover,
+      .nav-item.active {
+        color: #2e7d32;
+        opacity: 1;
+        background-color: rgba(46, 125, 50, 0.1);
+      }
+
+      .nav-item svg {
+        width: 24px;
+        height: 24px;
+        stroke-width: 1.5;
+      }
+
+      .nav-item span {
+        display: none;
+      }
+
+      .add-button {
+        background-color: #2e7d32;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border:none;
+        color: white;
+        box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
+        position: relative;
+        transition: transform 0.2s ease;
+      }
+
+      .add-button:hover {
+        transform: scale(1.05);
+      }
+
+      .top-header, .top{
+          display:flex;
+          gap: 20px;
+          align-items: center;
+      }
+
+      .top{
+        margin-top: 20px;}
+
+
+      .top-header h1{
+          font-weight: 200;
+          font-size: 20px;
+      }
+
+      .top-header button{
+          padding: 0px 20px;
+          height: 25px;
+          border-radius: 20px;
+          border: 0;
+          background-color: #d2d2d2;
+          color: white;
+          font-size: 11px;
+      }
+
+      .top-section {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 350px;
+        z-index: 10;
+      }
+
+      .header {
+        padding: 20px;
+        position: relative;
+        padding-top: 40px;
+        text-align: center;
+        font-weight: 500;
+        color: #676767;
+        padding: 40px;
+        font-size: 23px;
+      }
+
+      .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .more-menu {
+        position: relative;
+        cursor: pointer;
+        width: 40px;
+        height: 40px;
+        background-color: #f1f1f1;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: all 0.3s ease;
+        z-index: 100;
+      }
+
+      .three-dots {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 5px;
+        height: 20px;
+      }
+
+      .dot {
+        width: 5px;
+        height: 5px;
+        background-color: #666;
+        border-radius: 50%;
+      }
+
+      .slide-menu {
+        position: absolute;
+        top: 50px;
+        right: 0;
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        width: 150px;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s;
+        z-index: 100;
+      }
+
+      .slide-menu.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .menu-item {
+        display: flex;
+        align-items: center;
+        padding: 12px 15px;
+        transition: background-color 0.2s;
+      }
+
+      .menu-item:hover {
+        background-color: rgba(46, 125, 50, 0.1);
+      }
+
+      .menu-item i {
+        margin-right: 10px;
+        font-size: 18px;
+      }
+
+      .menu-item span {
+        font-size: 14px;
+      }
+
+      .menu-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.3);
+        z-index: 90;
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      .menu-overlay.active {
+        visibility: visible;
+        opacity: 1;
+        width: 100%;
+        height: 100%;
+      }
+
+      .back-container{
+        background-color: whitesmoke;
+        border-radius: 60px 60px 0 0;
+        width:100%;
+        padding: 20px;
+        padding-bottom: 120px;
+        min-height: 720px;
+      }
+
+      .filter-container {
+    margin: 10px 0;
+    padding: 10px 15px;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+
+  .filter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .filter-header h3 {
+    margin: 0;
+    font-size: 16px;
+    color: #4e703a;
+  }
+
+  .filter-toggle {
+    background: transparent;
+    border: none;
+    color: #4e703a;
+    font-size: 20px;
+    cursor: pointer;
+    transition: transform 0.3s;
+  }
+
+  .filter-toggle.active {
+    transform: rotate(180deg);
+  }
+
+  .filter-options {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+  }
+
+  .filter-options.active {
+    max-height: 500px;
+  }
+
+  .filter-group {
+    margin-bottom: 10px;
+  }
+
+  .filter-group-title {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 5px;
+    color: #555;
+  }
+
+  .filter-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .filter-chip {
+    padding: 6px 12px;
+    border-radius: 16px;
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .filter-chip.active {
+    background-color: #4e703a;
+    color: white;
+    border-color: #4e703a;
+  }
+
+  .date-input {
+    width: 100%;
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    margin-bottom: 8px;
+  }
+
+  .filter-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+    gap: 10px;
+  }
+
+  .filter-button {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  .apply-button {
+    background-color: #4e703a;
+    color: white;
+  }
+
+  .reset-button {
+    background-color: #f0f0f0;
+    color: #555;
+  }
+
+  .active-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+  }
+
+  .active-filter {
+    display: flex;
+    align-items: center;
+    background-color: #e8f0e3;
+    border-radius: 16px;
+    padding: 4px 10px;
+    font-size: 12px;
+    color: #4e703a;
+  }
+
+  .remove-filter {
+    margin-left: 5px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="top-section">
+        <div class="header">
+          <div class="header-content">
+            <div class="header-text">
+              <span>Tracking</span>
+            </div>
+            <div class="more-menu" id="more-menu">
+              <div class="three-dots">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+              </div>
+              <div class="slide-menu" id="slide-menu">
+                <div class="menu-item" id="analytics-btn">
+                  <i class="material-icons">analytics</i>
+                  <span>Analytics</span>
+                </div>
+                <div class="menu-item" id="chatbot-btn">
+                  <i class="material-icons">chat</i>
+                  <span>Chatbot</span>
+                </div>
+                <div class="menu-item" id="reward-btn">
+                  <i class="material-icons">emoji_events</i>
+                  <span>Rewards</span>
+                </div>
+                <div class="menu-item" id="notify-btn">
+                  <i class="material-icons">notifications</i>
+                  <span>Notifications</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="menu-overlay" id="menu-overlay"></div>
+        <div class="back-container">
+      <div class="slider-container" id="slider-container" data-active="active">
+        <div class="slider-indicator"></div>
+        <button class="slider-button active" id="active-btn">Active</button>
+        <button class="slider-button" id="past-btn">Past</button>
+      </div>
+      <div class="filter-container" id="filter-container">
+        <div class="filter-header">
+          <h3>Filter Deliveries</h3>
+          <button class="filter-toggle" id="filter-toggle">▼</button>
+        </div>
+        
+        <div class="active-filters" id="active-filters">
+        </div>
+        
+        <div class="filter-options" id="filter-options">
+          <div class="filter-group">
+            <div class="filter-group-title">Status</div>
+            <div class="filter-chips" id="status-filters">
+              <div class="filter-chip" data-filter="status" data-value="Waiting for Pickup">Waiting for Pickup</div>
+              <div class="filter-chip" data-filter="status" data-value="Picking Up">Picking Up</div>
+              <div class="filter-chip" data-filter="status" data-value="Delivering">Delivering</div>
+              <div class="filter-chip" data-filter="status" data-value="Delivered">Delivered</div>
+            </div>
+          </div>
+          
+          <div class="filter-group">
+            <div class="filter-group-title">Pickup Type</div>
+            <div class="filter-chips" id="pickup-filters">
+              <div class="filter-chip" data-filter="pickupType" data-value="Drop-off">Drop-off</div>
+              <div class="filter-chip" data-filter="pickupType" data-value="Pickup">Pick-up</div>
+            </div>
+          </div>
+          
+          <div class="filter-group">
+            <div class="filter-group-title">Date Range</div>
+            <input type="date" class="date-input" id="date-from" placeholder="From">
+            <input type="date" class="date-input" id="date-to" placeholder="To">
+          </div>
+          
+          <div class="filter-actions">
+            <button class="filter-button reset-button" id="reset-filters">Reset</button>
+            <button class="filter-button apply-button" id="apply-filters">Apply</button>
+          </div>
+        </div>
+      </div>
+      
+
+      <div class="delivery-container" id="delivery-container">
+        <div class="loading">Loading deliveries...</div>
+      </div>
+    </div>
+  </div>
+
+    <div class="bottom-nav">
+      <div class="nav-items-container">
+        <button class="nav-item " id="home-btn">
+          <img src="user-image/home.png" alt="Home" width="24" height="24" />
+          <span>Home</span>
+        </button>
+        <button class="nav-item" id="chat-btn">
+          <img src="user-image/chat.png" alt="Chat" width="24" height="24" />
+          <span>Chat</span>
+        </button>
+        <button class="add-button">
+          <img src="user-image/plus.png" alt="Add" width="24" height="24" />
+        </button>
+        <button class="nav-item active" id="tracking-btn">
+          <img
+            src="user-image/tracking.png"
+            alt="List"
+            width="24"
+            height="24"
+          />
+          <span>List</span>
+        </button>
+        <button class="nav-item" id="user-btn">
+          <img
+            src="user-image/profile.png"
+            alt="Profile"
+            width="24"
+            height="24"
+          />
+          <span>Profile</span>
+        </button>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const addButton = document.querySelector('.add-button');
+      const moreMenu = document.getElementById('more-menu');
+      const slideMenu = document.getElementById('slide-menu');
+      const menuOverlay = document.getElementById('menu-overlay');
+      const analyticsBtn = document.getElementById('analytics-btn');
+      const chatbotBtn = document.getElementById('chatbot-btn');
+      const rewardBtn = document.getElementById('reward-btn');
+      const notifyBtn = document.getElementById("notify-btn");
+    
+      moreMenu.addEventListener('click', function(e) {
+        e.stopPropagation();
+        slideMenu.classList.toggle('active');
+        menuOverlay.classList.toggle('active');
+      });
+      
+      menuOverlay.addEventListener('click', function() {
+        slideMenu.classList.remove('active');
+        menuOverlay.classList.remove('active');
+      });
+      
+      analyticsBtn.addEventListener('click', function() {
+        window.location.href = 'analytic.html';
+      });
+      
+      chatbotBtn.addEventListener('click', function() {
+        window.location.href = 'chatbot.html';
+      });
+      
+      rewardBtn.addEventListener('click', function() {
+        window.location.href = 'reward.html';
+      });
+    
+      addButton.addEventListener('touchstart', function() {
+        window.location.href = 'bucket.html';
+      });
+    
+      document.getElementById("chat-btn").addEventListener("touchstart", function() {
+        window.location.href = "chat_list.html"; 
+      });
+
+      notifyBtn.addEventListener("click", function () {
+          window.location.href = "notify.html";
+        });
+    
+      document.getElementById("logout-btn").addEventListener("touchstart", function() {
+        localStorage.removeItem("userSession");
+        
+        auth.signOut().then(() => {
+            window.location.href = "index.html";
+        }).catch((error) => {
+            console.error("Error during logout:", error);
+        });
+      });
+    });
+    
+    document.addEventListener("DOMContentLoaded", function () {
+      const addButton = document.querySelector(".add-button");
+      const homeBtn = document.getElementById("home-btn");
+      const chatBtn = document.getElementById("chat-btn");
+      const trackingBtn = document.getElementById("tracking-btn");
+      const userBtn = document.getElementById("user-btn"); 
+    
+      if (homeBtn) {
+        homeBtn.addEventListener("touchstart", function () {
+          window.location.href = "main_page.html";
+        });
+      }
+    
+      if (chatBtn) {
+        chatBtn.addEventListener("touchstart", function () {
+          window.location.href = "chat_list.html";
+        });
+      }
+    
+      if (addButton) {
+        addButton.addEventListener("touchstart", function () {
+          window.location.href = "bucket.html";
+        });
+      }
+    
+      if (trackingBtn) {
+        trackingBtn.addEventListener("touchstart", function () {
+          window.location.href = "tracking.html";
+        });
+      }
+    
+      if (userBtn) { 
+        userBtn.addEventListener("touchstart", function () {
+          window.location.href = "profile.html";
+        });
+      }
+    }); 
+    
+    const firebaseConfig = {
+      apiKey: "AIzaSyDgoc4Zx064nL1iydJbccI692HDpu8gLLE",
+      authDomain: "capstone-project-312dc.firebaseapp.com",
+      projectId: "capstone-project-312dc",
+      storageBucket: "capstone-project-312dc.firebasestorage.app",
+      messagingSenderId: "82712440613",
+      appId: "1:82712440613:web:124a86e48a3b9c3e6bf4cc",
+      measurementId: "G-YFF9RVYJ9C",
+    };
+    
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    
+    let currentUserId = null;
+    
+    const activeBtn = document.getElementById("active-btn");
+    const pastBtn = document.getElementById("past-btn");
+    const sliderContainer = document.getElementById("slider-container");
+    const deliveryContainer = document.getElementById("delivery-container");
+    
+    let currentView = "active";
+    
+    activeBtn.addEventListener("click", () => {
+      sliderContainer.dataset.active = "active";
+      activeBtn.classList.add("active");
+      pastBtn.classList.remove("active");
+      currentView = "active";
+      fetchDeliveries();
+    });
+    
+    pastBtn.addEventListener("click", () => {
+      sliderContainer.dataset.active = "past";
+      pastBtn.classList.add("active");
+      activeBtn.classList.remove("active");
+      currentView = "past";
+      fetchDeliveries();
+    });
+    
+    function updateSliderState() {
+      if (currentView === "active") {
+        activeBtn.classList.add("active");
+        pastBtn.classList.remove("active");
+        sliderContainer.dataset.active = "active";
+      } else {
+        activeBtn.classList.remove("active");
+        pastBtn.classList.add("active");
+        sliderContainer.dataset.active = "past";
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+    const activeBtn = document.getElementById("active-btn");
+    const pastBtn = document.getElementById("past-btn");
+    const filterContainer = document.getElementById("filter-container");
+
+    if (activeBtn && pastBtn && filterContainer) {
+      activeBtn.addEventListener("click", () => {
+        filterContainer.style.display = "block";
+      });
+
+      pastBtn.addEventListener("click", () => {
+        filterContainer.style.display = "none";
+      });
+    }
+  });
+    
+    function formatDate(timestamp) {
+      const date = timestamp.toDate();
+      return date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      });
+    }
+    
+    function formatTime(timestamp) {
+      const date = timestamp.toDate();
+      return date.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    }
+    
+    window.activeFilters = {
+      status: [],
+      pickupType: [],
+      dateFrom: null,
+      dateTo: null
+    };
+    
+    document.addEventListener("DOMContentLoaded", function() {
+      const filterToggle = document.getElementById("filter-toggle");
+      const filterOptions = document.getElementById("filter-options");
+      const filterChips = document.querySelectorAll(".filter-chip");
+      const applyFiltersButton = document.getElementById("apply-filters");
+      const resetFiltersButton = document.getElementById("reset-filters");
+      const activeFiltersContainer = document.getElementById("active-filters");
+      
+      filterToggle.addEventListener("click", function() {
+        filterOptions.classList.toggle("active");
+        filterToggle.classList.toggle("active");
+      });
+
+      filterChips.forEach(chip => {
+        chip.addEventListener("click", function() {
+          const filterType = this.getAttribute("data-filter");
+          const filterValue = this.getAttribute("data-value");
+          
+          this.classList.toggle("active");
+          
+          if (this.classList.contains("active")) {
+            if (!window.activeFilters[filterType].includes(filterValue)) {
+              window.activeFilters[filterType].push(filterValue);
+            }
+          } else {
+            window.activeFilters[filterType] = window.activeFilters[filterType].filter(value => value !== filterValue);
+          }
+        });
+      });
+      
+
+      applyFiltersButton.addEventListener("click", function() {
+        window.activeFilters.dateFrom = document.getElementById("date-from").value || null;
+        window.activeFilters.dateTo = document.getElementById("date-to").value || null;
+        
+
+        updateActiveFiltersUI();
+        
+
+        fetchDeliveries();
+        
+        filterOptions.classList.remove("active");
+        filterToggle.classList.remove("active");
+      });
+
+      resetFiltersButton.addEventListener("click", function() {
+        window.activeFilters = {
+          status: [],
+          pickupType: [],
+          dateFrom: null,
+          dateTo: null
+        };
+        
+
+        filterChips.forEach(chip => chip.classList.remove("active"));
+        document.getElementById("date-from").value = "";
+        document.getElementById("date-to").value = "";
+        
+        updateActiveFiltersUI();
+        
+        fetchDeliveries();
+      });
+
+      function updateActiveFiltersUI() {
+        activeFiltersContainer.innerHTML = "";
+        
+        window.activeFilters.status.forEach(status => {
+          addActiveFilterChip("status", status);
+        });
+        
+        window.activeFilters.pickupType.forEach(pickupType => {
+          addActiveFilterChip("pickupType", pickupType);
+        });
+        
+        if (window.activeFilters.dateFrom || window.activeFilters.dateTo) {
+          const dateText = `${window.activeFilters.dateFrom || 'Any'} to ${window.activeFilters.dateTo || 'Any'}`;
+          addActiveFilterChip("dateRange", dateText);
+        }
+      }
+      
+      function addActiveFilterChip(filterType, value) {
+        const chip = document.createElement("div");
+        chip.className = "active-filter";
+        chip.innerHTML = `${value} <span class="remove-filter" data-filter="${filterType}" data-value="${value}">×</span>`;
+        activeFiltersContainer.appendChild(chip);
+        
+        const removeButton = chip.querySelector(".remove-filter");
+        removeButton.addEventListener("click", function() {
+          const type = this.getAttribute("data-filter");
+          const val = this.getAttribute("data-value");
+          
+          if (type === "dateRange") {
+            window.activeFilters.dateFrom = null;
+            window.activeFilters.dateTo = null;
+            document.getElementById("date-from").value = "";
+            document.getElementById("date-to").value = "";
+          } else {
+            window.activeFilters[type] = window.activeFilters[type].filter(v => v !== val);
+            
+            const relatedChip = document.querySelector(`.filter-chip[data-filter="${type}"][data-value="${val}"]`);
+            if (relatedChip) {
+              relatedChip.classList.remove("active");
+            }
+          }
+          
+          updateActiveFiltersUI();
+          fetchDeliveries();
+        });
+      }
+    });
+    
+  async function fetchDeliveries() {
+  deliveryContainer.innerHTML = '<div class="loading">Loading deliveries...</div>';
+
+  try {
+    let query = db.collection("deliveries");
+    
+    if (currentView === "active") {
+      if (window.activeFilters && window.activeFilters.status && window.activeFilters.status.length > 0) {
+        query = query.where("status", "in", window.activeFilters.status);
+      } else {
+        query = query.where("status", "in", ["Waiting for Pickup", "Picking Up", "Delivering", "Delivered"]);
+      }
+    } else {
+      query = query.where("status", "==", "Processed");
+    }
+    
+    query = query.orderBy("createdAt", "desc");
+    
+    const snapshot = await query.get();
+    
+    if (snapshot.empty) {
+      deliveryContainer.innerHTML = `<div class="no-deliveries">No ${currentView} deliveries found</div>`;
+      return;
+    }
+    
+    let filteredResults = [];
+    
+    snapshot.forEach(doc => {
+      const delivery = doc.data();
+      const deliveryId = doc.id;
+      let includeDelivery = true;
+
+      if (window.activeFilters && window.activeFilters.pickupType && window.activeFilters.pickupType.length > 0) {
+        if (!window.activeFilters.pickupType.includes(delivery.pickupType)) {
+          includeDelivery = false;
+        }
+      }
+      
+      if (window.activeFilters && (window.activeFilters.dateFrom || window.activeFilters.dateTo)) {
+        const deliveryDate = delivery.createdAt.toDate();
+        
+        if (window.activeFilters.dateFrom) {
+          const fromDate = new Date(window.activeFilters.dateFrom);
+          if (deliveryDate < fromDate) {
+            includeDelivery = false;
+          }
+        }
+        
+        if (window.activeFilters.dateTo) {
+          const toDate = new Date(window.activeFilters.dateTo);
+          toDate.setHours(23, 59, 59, 999);
+          if (deliveryDate > toDate) {
+            includeDelivery = false;
+          }
+        }
+      }
+      
+      if (includeDelivery) {
+        filteredResults.push({ id: deliveryId, data: delivery });
+      }
+    });
+    
+    if (filteredResults.length === 0) {
+      deliveryContainer.innerHTML = `<div class="no-deliveries">No deliveries match your filters</div>`;
+      return;
+    }
+    
+    let deliveriesHTML = "";
+    
+    filteredResults.forEach(({ id: deliveryId, data: delivery }) => {
+      let statusClass = "";
+      
+      switch (delivery.status) {
+        case "Waiting for Pickup":
+          statusClass = "status-waiting";
+          break;
+        case "Picking Up":
+          statusClass = "status-ondelivery";
+          break;
+        case "Delivering":
+          statusClass = "status-ondelivery";
+          break;
+        case "Delivered":
+          statusClass = "status-delivered";
+          break;
+        case "Processed":
+          statusClass = "status-delivered";
+          break;
+      }
+      
+      deliveriesHTML += `
+        <div class="delivery-box" data-id="${deliveryId}">
+          <div class="delivery-id">${deliveryId}</div>
+          <div class="delivery-status ${statusClass}">${delivery.status}</div>
+          
+          <div class="delivery-detail">
+            <div class="detail-label">Location:</div>
+            <div class="detail-value">${delivery.location}</div>
+          </div>
+          
+          <div class="delivery-detail">
+            <div class="detail-label">Pickup Type:</div>
+            <div class="detail-value">${delivery.pickupType}</div>
+          </div>
+          
+          <div class="delivery-detail">
+            <div class="detail-label">Preferred Date:</div>
+            <div class="detail-value">${delivery.preferredDate}</div>
+          </div>
+          
+          <div class="delivery-detail">
+            <div class="detail-label">Preferred Time:</div>
+            <div class="detail-value">${delivery.preferredTime}</div>
+          </div>
+          
+          <div class="delivery-detail">
+            <div class="detail-label">Created:</div>
+            <div class="detail-value">${formatDate(delivery.createdAt)}</div>
+          </div>
+        </div>
+      `;
+    });
+    
+    deliveryContainer.innerHTML = deliveriesHTML;
+
+    document.querySelectorAll('.delivery-box').forEach(box => {
+      box.addEventListener('click', function() {
+        const deliveryId = this.getAttribute('data-id');
+        showDetailsModal(deliveryId);
+      });
+    });
+  } catch (error) {
+    console.error("Error fetching deliveries:", error);
+    deliveryContainer.innerHTML =
+      '<div class="no-deliveries">Error loading deliveries. Please try again.</div>';
+  }
+}
+
+async function downloadInvoice(invoiceId, buttonElement) {
+  try {
+    const originalText = buttonElement.textContent;
+    buttonElement.textContent = "Loading...";
+    buttonElement.disabled = true;
+
+    const invoiceSnapshot = await db.collection('invoices')
+      .where('invoiceId', '==', invoiceId)
+      .get();
+
+    if (invoiceSnapshot.empty) {
+      alert("Invoice not found");
+      buttonElement.textContent = originalText;
+      buttonElement.disabled = false;
+      return;
+    }
+
+    const invoiceData = invoiceSnapshot.docs[0].data();
+    if (!invoiceData.pdfData) {
+      alert("Invoice PDF data not found");
+      buttonElement.textContent = originalText;
+      buttonElement.disabled = false;
+      return;
+    }
+
+    const link = document.createElement('a');
+    link.href = invoiceData.pdfData;
+    link.download = `Invoice_${invoiceId}.pdf`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    buttonElement.textContent = originalText;
+    buttonElement.disabled = false;
+  } catch (error) {
+    console.error("Error downloading invoice:", error);
+    alert("Error downloading invoice. Please try again.");
+    buttonElement.textContent = "Download Invoice";
+    buttonElement.disabled = false;
+  }
+};
+
+    function createDetailsModal() {
+      const modalContainer = document.createElement('div');
+      modalContainer.id = 'details-modal';
+      modalContainer.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s, visibility 0.3s;
+      `;
+      
+      const modalContent = document.createElement('div');
+      modalContent.style.cssText = `
+        width: 90%;
+        max-width: 400px;
+        background-color: white;
+        border-radius: 20px;
+        padding: 20px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        position: relative;
+        max-height: 90vh;
+        overflow-y: auto;
+      `;
+      
+      const closeButton = document.createElement('button');
+      closeButton.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+      `;
+      closeButton.style.cssText = `
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background-color: white;
+        border: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      `;
+      closeButton.onclick = hideDetailsModal;
+      
+      const detailsContainer = document.createElement('div');
+      detailsContainer.id = 'delivery-details-container';
+      
+      modalContent.appendChild(closeButton);
+      modalContent.appendChild(detailsContainer);
+      modalContainer.appendChild(modalContent);
+      document.body.appendChild(modalContainer);
+    }
+    
+    async function showDetailsModal(deliveryId) {
+  try {
+    const modal = document.getElementById('details-modal');
+    const detailsContainer = document.getElementById('delivery-details-container');
+    
+    detailsContainer.innerHTML = '<div style="text-align: center; padding: 20px;">Loading details...</div>';
+    modal.style.visibility = 'visible';
+    modal.style.opacity = '1';
+    
+    const deliveryDoc = await db.collection('deliveries').doc(deliveryId).get();
+    
+    if (!deliveryDoc.exists) {
+      detailsContainer.innerHTML = '<div style="text-align: center; padding: 20px;">Delivery not found</div>';
+      return;
+    }
+    
+    const deliveryData = deliveryDoc.data();
+    
+    // Check if this is a "Processed" delivery (past item)
+    const isPastDelivery = deliveryData.status === "Processed";
+    
+    const itemsSnapshot = await db.collection('delivery_items')
+      .where('deliveryId', '==', deliveryId)
+      .get();
+    
+    let itemsHTML = '';
+    
+    if (!itemsSnapshot.empty) {
+      // For each delivery item, we need to check both inventory and recycled_inventory
+      for (const itemDoc of itemsSnapshot.docs) {
+        const itemData = itemDoc.data();
+        const inventoryId = itemData.inventoryId;
+        
+        // Get the inventory data
+        const inventoryDoc = await db.collection('inventory')
+          .doc(inventoryId)
+          .get();
+        
+        if (!inventoryDoc.exists) {
+          continue; // Skip if inventory doesn't exist
+        }
+        
+        const inventoryData = inventoryDoc.data();
+        
+        // For past deliveries, check if this item has an invoice in recycled_inventory
+        let invoiceButton = '';
+        if (isPastDelivery) {
+          // Get the recycled inventory data for this item
+          const recycledItemsSnapshot = await db.collection('recycled_inventory')
+            .where('originalItemId', '==', inventoryId)
+            .get();
+          
+          if (!recycledItemsSnapshot.empty) {
+            // Find the first recycled item with an invoice
+            const recycledItem = recycledItemsSnapshot.docs.find(doc => doc.data().invoiceId);
+            
+            if (recycledItem) {
+              const recycledData = recycledItem.data();
+              const invoiceId = recycledData.invoiceId;
+              
+              // Check if the invoice exists
+              const invoiceSnapshot = await db.collection('invoices')
+                .where('invoiceId', '==', invoiceId)
+                .get();
+              
+              if (!invoiceSnapshot.empty) {
+                invoiceButton = `
+                  <div style="margin-top: 35px;">
+                    <button class="invoice-download-btn" data-invoice-id="${invoiceId}" 
+                    style="
+                    background-color: #4E703A; 
+                    width: 100%;
+                    color: white; 
+                    border: none; 
+                    border-radius: 20px; 
+                    padding: 12px 15px; 
+                    font-size: 14px; 
+                    cursor: pointer;">
+                      Download Invoice
+                    </button>
+                  </div>
+                `;
+              } else {
+                invoiceButton = `
+                  <div style="margin-top: 35px; 
+                  color: #888; 
+                  font-style: italic; 
+                  font-size: 14px;">
+                    Invoice not found
+                  </div>
+                `;
+              }
+            } else {
+              invoiceButton = `
+                <div style="margin-top: 35px; 
+                color: #888; 
+                font-style: italic; 
+                font-size: 14px;">
+                  No invoice generated yet.
+                </div>
+              `;
+            }
+          } else {
+            invoiceButton = `
+              <div style="margin-top: 15px; color: #888; font-style: italic; font-size: 14px;">
+                Item not processed yet
+              </div>
+            `;
+          }
+        }
+        
+        let categoryDisplay = inventoryData.category || 'Item';
+        
+        if (inventoryData.category === "Other" && inventoryData.others) {
+          categoryDisplay = inventoryData.others;
+        }
+        
+        itemsHTML += `
+          <div style="background-color: white; border-radius: 10px; padding: 15px 15px 15px 25px; margin-bottom: 25px; border-left: solid 1px #4E703A; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
+            <h3 style="color: #4e703a; margin-bottom: 10px;">${categoryDisplay}</h3>
+            <hr style="margin-bottom: 10px;">
+            ${inventoryData.model ? `<div style="color: #757575; font-size: 14px; margin-bottom: 5px;"><strong>Model Name:</strong> ${inventoryData.model}</div>` : ''}
+            ${inventoryData.amount ? `<div style="color: #757575; font-size: 14px; margin-bottom: 5px;"><strong>Amount:</strong> ${inventoryData.amount}</div>` : ''}
+            ${inventoryData.condition ? `<div style="color: #757575; font-size: 14px; margin-bottom: 5px;"><strong>Condition:</strong> ${inventoryData.condition}</div>` : ''}
+            ${inventoryData.defect ? `<div style="color: #757575; font-size: 14px;"><strong>Defect:</strong> ${inventoryData.defect}</div>` : ''}
+            ${invoiceButton}
+          </div>
+        `;
+      }
+    }
+    
+    const detailsHTML = `
+      <div style="text-align: center; margin-bottom: 20px;">
+        <h2 style="color: #4e703a; font-size: 22px; margin-bottom: 5px;">#${deliveryId.substring(0, 4)}</h2>
+      </div>
+        
+        <div style="margin-bottom: 20px; ">
+          ${itemsHTML || '<div style="text-align: center; padding: 20px; color: #777;">No items found</div>'}
+        </div>
+      </div>
+    `;
+    
+    detailsContainer.innerHTML = detailsHTML;
+    
+    // Add event listeners to invoice buttons
+    document.querySelectorAll('.invoice-download-btn').forEach(btn => {
+      btn.addEventListener('click', async function() {
+        const invoiceId = this.getAttribute('data-invoice-id');
+        await downloadInvoice(invoiceId, this);
+      });
+    });
+    
+  } catch (error) {
+    console.error('Error showing delivery details:', error);
+    const detailsContainer = document.getElementById('delivery-details-container');
+    detailsContainer.innerHTML = '<div style="text-align: center; padding: 20px;">Error loading details. Please try again.</div>';
+  }
+}
+
+    function hideDetailsModal() {
+      const modal = document.getElementById('details-modal');
+      modal.style.opacity = '0';
+      setTimeout(() => {
+        modal.style.visibility = 'hidden';
+      }, 300);
+    }
+    
+    document.addEventListener("DOMContentLoaded", function () {
+      createDetailsModal();
+
+      updateSliderState();
+      fetchDeliveries();
+    });
+  </script>
+  </body>
+</html>

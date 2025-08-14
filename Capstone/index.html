@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="manifest" href="manifest.json">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Poyo Waste</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        background-color: white;
+        width: 100%;
+        height: 96vh;
+        overflow: hidden;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 0 30px;
+      }
+
+      .text-container {
+        margin-top: auto;
+        padding-bottom: 40px;
+      }
+
+      .renew {
+        font-size: 70px;
+        font-weight: bold;
+        line-height: 1.1;
+        animation: swipeUp 0.5s ease-out forwards;
+        transform: translateY(50px); /* Start position below */
+        opacity: 0; /* Initially invisible */
+      }
+
+      .recycle {
+        font-size: 70px;
+        font-weight: bold;
+        color: #85c769;
+        line-height: 1.1;
+        animation: swipeUp 0.5s ease-out 0.3s forwards; /* Added delay */
+        transform: translateY(50px);
+        opacity: 0;
+      }
+
+      .sustain {
+        font-size: 70px;
+        font-weight: bold;
+        line-height: 1.1;
+        animation: swipeUp 0.5s ease-out 0.6s forwards; 
+        transform: translateY(50px);
+        opacity: 0;
+      }
+
+      @keyframes swipeUp {
+        to {
+          transform: translateY(0); /* Ending position at original */
+          opacity: 1; /* Fully visible */
+        }
+      }
+
+      .swipe-button-container {
+        position: relative;
+        width: 100%;
+        max-width: 500px;
+        height: 50px;
+        border-radius: 25px;
+        background-color: #79c769;
+        overflow: hidden;
+        margin-bottom: 20px;
+      }
+
+
+      .swipe-text {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        font-size: 16px;
+        pointer-events: none;
+        z-index: 2;
+      }
+
+
+      .swipe-circle {
+        position: absolute;
+        left: 5px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 32px;
+        height: 32px;
+        background-color: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 3;
+      }
+
+
+      .arrow {
+        width: 8px;
+        height: 8px;
+        border-right: 2px solid white;
+        border-top: 2px solid white;
+        transform: rotate(45deg);
+      }
+
+
+      .swipe-highlight {
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 0;
+        background-color: rgba(255, 255, 255, 0.2);
+        transition: width 0.3s ease;
+        z-index: 1;
+      }
+
+
+      @keyframes swipeAnimation {
+        0% {
+          transform: translateY(-50%) translateX(0);
+        }
+        50% {
+          transform: translateY(-50%) translateX(30px);
+        }
+        100% {
+          transform: translateY(-50%) translateX(0);
+        }
+      }
+
+      .swipe-animation {
+        animation: swipeAnimation 3s ease infinite;
+        animation-delay: 1s;
+      }
+
+      .account-text {
+        margin-top: 20px;
+        text-align: center;
+      }
+
+      .reagister-link {
+        color: #85c769;
+        text-decoration: none;
+        text-decoration: underline;
+      }
+
+      .background-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 60%;
+        z-index: -1;
+        object-fit: cover;
+        object-position: center top;
+      }
+
+      .button-container{
+        margin-bottom:8%;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <img
+      src="user-image/Manage.png"
+      alt="Background curves"
+      class="background-image"
+    />
+    <div class="text-container">
+      <p class="renew" style="font-weight: 400">Renew.</p>
+      <p class="recycle" style="font-weight: 400">Recycle.</p>
+      <p class="sustain" style="font-weight: 400">Sustain</p>
+    </div>
+
+    <div class="button-container">
+      <div class="swipe-button-container">
+        <div class="swipe-text">Let's Start!</div>
+        <div class="swipe-highlight"></div>
+        <div class="swipe-circle">
+          <span class="arrow"></span>
+        </div>
+      </div>
+
+      <p class="account-text">Don't have an account yet?</p>
+      <a href="sign_up.html" class="reagister-link">Register Now!</a>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const swipeCircle = document.querySelector(".swipe-circle");
+        const swipeContainer = document.querySelector(
+          ".swipe-button-container"
+        );
+        const swipeHighlight = document.querySelector(".swipe-highlight");
+
+        let isDragging = false;
+        let startX;
+        let initialLeft = 5;
+
+        // Add animation class to circle
+        swipeCircle.classList.add("swipe-animation");
+
+        // Touch events for mobile
+        swipeCircle.addEventListener("touchstart", function (e) {
+          isDragging = true;
+          startX = e.touches[0].clientX;
+          swipeCircle.classList.remove("swipe-animation");
+          e.preventDefault();
+        });
+
+        document.addEventListener("touchmove", function (e) {
+          if (!isDragging) return;
+
+          const touch = e.touches[0];
+          const containerRect = swipeContainer.getBoundingClientRect();
+          const maxX = containerRect.width - swipeCircle.offsetWidth - 10;
+
+          let newLeft = touch.clientX - startX + initialLeft;
+          newLeft = Math.max(5, Math.min(newLeft, maxX));
+
+          swipeCircle.style.left = newLeft + "px";
+          swipeHighlight.style.width =
+            newLeft + swipeCircle.offsetWidth / 2 + "px";
+
+          if (newLeft >= maxX * 0.9) {
+            // Successful swipe
+            completeSwipe();
+          }
+
+          e.preventDefault();
+        });
+
+        document.addEventListener("touchend", function (e) {
+          if (!isDragging) return;
+          isDragging = false;
+
+          const containerRect = swipeContainer.getBoundingClientRect();
+          const maxX = containerRect.width - swipeCircle.offsetWidth - 10;
+          const currentLeft = parseFloat(swipeCircle.style.left || initialLeft);
+
+          if (currentLeft < maxX * 0.9) {
+            resetSwipe();
+          }
+
+          e.preventDefault();
+        });
+
+        // Mouse events for desktop
+        swipeCircle.addEventListener("mousedown", function (e) {
+          isDragging = true;
+          startX = e.clientX;
+          swipeCircle.classList.remove("swipe-animation");
+          e.preventDefault();
+        });
+
+        document.addEventListener("mousemove", function (e) {
+          if (!isDragging) return;
+
+          const containerRect = swipeContainer.getBoundingClientRect();
+          const maxX = containerRect.width - swipeCircle.offsetWidth - 10;
+
+          let newLeft = e.clientX - startX + initialLeft;
+          newLeft = Math.max(5, Math.min(newLeft, maxX));
+
+          swipeCircle.style.left = newLeft + "px";
+          swipeHighlight.style.width =
+            newLeft + swipeCircle.offsetWidth / 2 + "px";
+
+          if (newLeft >= maxX * 0.9) {
+            completeSwipe();
+          }
+        });
+
+        document.addEventListener("mouseup", function (e) {
+          if (!isDragging) return;
+          isDragging = false;
+
+          const containerRect = swipeContainer.getBoundingClientRect();
+          const maxX = containerRect.width - swipeCircle.offsetWidth - 10;
+          const currentLeft = parseFloat(swipeCircle.style.left || initialLeft);
+
+          if (currentLeft < maxX * 0.9) {
+            resetSwipe();
+          }
+        });
+
+        function resetSwipe() {
+          swipeCircle.style.transition = "left 0.3s ease";
+          swipeHighlight.style.transition = "width 0.3s ease";
+          swipeCircle.style.left = initialLeft + "px";
+          swipeHighlight.style.width = "0";
+
+          setTimeout(function () {
+            swipeCircle.style.transition = "";
+            swipeHighlight.style.transition = "";
+            swipeCircle.classList.add("swipe-animation");
+          }, 300);
+        }
+
+        function completeSwipe() {
+          window.location.href = "login.html";
+          setTimeout(resetSwipe, 500);
+        }
+      });
+    </script>
+  </body>
+</html>

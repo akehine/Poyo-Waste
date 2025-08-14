@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=MuseoModerno:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body,
+      html {
+        margin: 0 auto;
+        overflow-x: hidden;
+        background-image: url(user-image/back.png);
+      }
+
+      .top-section {
+        position: relative;
+        width: 100%;
+        z-index: 10;
+      }
+
+      .header {
+        padding: 20px;
+        position: relative;
+        color: rgb(103, 103, 103);
+        padding-top: 40px;
+        padding-left: 40px;
+        padding-right: 40px;
+      }
+
+      .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 400;
+      }
+
+      .back-button {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+      }
+
+      .header-text span {
+        font-size: 23px;
+        font-weight: 400;
+      }
+
+      .notification-container {
+        background-color: white;
+        border-top-left-radius: 50px;
+        border-top-right-radius: 50px;
+        width: 100%;
+        min-height: calc(100vh - 150px);
+        padding: 30px;
+        margin-top: 20px;
+        padding-bottom: 120px;
+      }
+
+      .notification-card {
+        background-color: white;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 15px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: flex-start;
+        position: relative;
+        transition: transform 0.2s ease;
+      }
+
+      .notification-card:hover {
+        transform: translateY(-2px);
+      }
+
+      .notification-icon {
+        margin-right: 15px;
+        background-color: rgba(46, 125, 50, 0.1);
+        padding: 10px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .notification-icon i {
+        color: #2e7d32;
+        font-size: 24px;
+      }
+
+      .notification-content {
+        flex: 1;
+      }
+
+      .notification-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+
+      .notification-title {
+        font-weight: 500;
+        font-size: 16px;
+        color: #333;
+      }
+
+      .notification-time {
+        font-size: 12px;
+        color: #888;
+      }
+
+      .notification-message {
+        font-size: 14px;
+        color: #555;
+        line-height: 1.4;
+      }
+
+      .notification-related {
+        font-size: 13px;
+        color: #1a5018;
+        margin-top: 8px;
+      }
+
+      .unread-indicator {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        width: 10px;
+        height: 10px;
+        background-color: #2e7d32;
+        border-radius: 50%;
+      }
+
+      .notification-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 300px;
+        text-align: center;
+        color: #888;
+      }
+
+      .notification-empty i {
+        font-size: 60px;
+        color: #ccc;
+        margin-bottom: 20px;
+      }
+
+      .notification-filters {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+        overflow-x: auto;
+        padding-bottom: 10px;
+      }
+
+      .filter-button {
+        background-color: #f1f1f1;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-size: 13px;
+        color: #666;
+        white-space: nowrap;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .filter-button.active {
+        background-color: #2e7d32;
+        color: white;
+      }
+
+      .filter-button:hover:not(.active) {
+        background-color: #e0e0e0;
+      }
+
+      .bottom-nav {
+        background-color: white;
+        border-radius: 30px;
+        margin: 20px;
+        padding: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        position: fixed;
+        bottom: 20px;
+        width: 90%;
+        z-index: 100;
+      }
+
+      .nav-items-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        padding: 0 10px;
+      }
+
+      .nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        color: #888;
+        transition: color 0.3s ease;
+        opacity: 0.6;
+        width: 50px;
+        text-align: center;
+        padding: 12px;
+        border-radius: 30px;
+        background: transparent;
+      }
+
+      .nav-item:hover,
+      .nav-item.active {
+        color: #2e7d32;
+        opacity: 1;
+        background-color: rgba(46, 125, 50, 0.1);
+      }
+
+      .nav-item svg {
+        width: 24px;
+        height: 24px;
+        stroke-width: 1.5;
+      }
+
+      .nav-item span {
+        display: none;
+      }
+
+      .add-button {
+        background-color: #2e7d32;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: none;
+        color: white;
+        box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
+        position: relative;
+        transition: transform 0.2s ease;
+        cursor: pointer;
+      }
+
+      .add-button:hover {
+        transform: scale(1.05);
+      }
+
+      .mark-all-read {
+        background-color: transparent;
+        border: 1px solid #2e7d32;
+        color: #2e7d32;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-size: 13px;
+        cursor: pointer;
+        margin-left: auto;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        transition: all 0.2s ease;
+      }
+
+      .mark-all-read:hover {
+        background-color: rgba(46, 125, 50, 0.1);
+      }
+
+      .loader {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 200px;
+      }
+
+      .loader-spinner {
+        border: 4px solid rgba(0, 0, 0, 0.1);
+        border-radius: 50%;
+        border-top: 4px solid #2e7d32;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="top-section">
+      <div class="header">
+        <div class="header-content">
+          <div class="back-button" id="back-btn">
+            <i class="material-icons">arrow_back</i>
+          </div>
+          <div class="header-text">
+            <span>Notifications</span>
+          </div>
+          <div style="width: 24px"></div>
+        </div>
+      </div>
+
+      <div class="notification-container">
+        <div class="notification-filters">
+          <button class="filter-button active" data-filter="all">All</button>
+          <button class="filter-button" data-filter="Pickup Alert (User)">
+            Pickup Alerts
+          </button>
+          <button class="filter-button" data-filter="Weather Reschedule (User)">
+            Weather Alerts
+          </button>
+          <button class="filter-button" data-filter="Rescheduling (User)">
+            Reschedule Alerts
+          </button>
+          <button class="filter-button" data-filter="unread">Unread</button>
+        </div>
+
+        <button class="mark-all-read" id="mark-all-read">
+          <i class="material-icons" style="font-size: 16px">done_all</i>
+          Mark all as read
+        </button>
+
+        <div id="notifications-list">
+          <div class="loader">
+            <div class="loader-spinner"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bottom-nav">
+        <div class="nav-items-container">
+          <button class="nav-item" id="home-btn">
+            <img src="user-image/home.png" alt="Home" width="24" height="24" />
+            <span>Home</span>
+          </button>
+          <button class="nav-item" id="chat-btn">
+            <img src="user-image/chat.png" alt="Chat" width="24" height="24" />
+            <span>Chat</span>
+          </button>
+          <button class="add-button" id="add-btn">
+            <img src="user-image/plus.png" alt="Add" width="24" height="24" />
+          </button>
+          <button class="nav-item" id="tracking-btn">
+            <img
+              src="user-image/tracking.png"
+              alt="List"
+              width="24"
+              height="24"
+            />
+            <span>List</span>
+          </button>
+          <button class="nav-item" id="profile-btn">
+            <img
+              src="user-image/profile.png"
+              alt="Profile"
+              width="24"
+              height="24"
+            />
+            <span>Profile</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-auth-compat.js"></script>
+
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyDgoc4Zx064nL1iydJbccI692HDpu8gLLE",
+        authDomain: "capstone-project-312dc.firebaseapp.com",
+        projectId: "capstone-project-312dc",
+        storageBucket: "capstone-project-312dc.appspot.com",
+        messagingSenderId: "82712440613",
+        appId: "1:82712440613:web:124a86e48a3b9c3e6bf4cc",
+        measurementId: "G-YFF9RVYJ9C",
+      };
+
+      firebase.initializeApp(firebaseConfig);
+      const auth = firebase.auth();
+      const db = firebase.firestore();
+
+      // Session management
+      function createSession(user) {
+        localStorage.setItem(
+          "userSession",
+          JSON.stringify({
+            uid: user.uid,
+            email: user.email,
+            lastLogin: new Date().toISOString(),
+          })
+        );
+      }
+
+      function checkSession() {
+        const sessionData = localStorage.getItem("userSession");
+
+        if (!sessionData) {
+          window.location.href = "login.html";
+          return null;
+        }
+
+        const session = JSON.parse(sessionData);
+
+        const currentTime = new Date();
+        const sessionTime = new Date(session.lastLogin);
+        const hoursDifference = (currentTime - sessionTime) / (1000 * 60 * 60);
+
+        if (hoursDifference > 24) {
+          localStorage.removeItem("userSession");
+          window.location.href = "login.html";
+          return null;
+        }
+
+        return session;
+      }
+
+      // Format dates for notifications
+      function formatDatetime(timestamp) {
+        if (!timestamp) return "";
+
+        const now = new Date();
+        const date = timestamp.toDate
+          ? timestamp.toDate()
+          : new Date(timestamp);
+        const diffMs = now - date;
+        const diffMins = Math.floor(diffMs / 60000);
+        const diffHours = Math.floor(diffMins / 60);
+        const diffDays = Math.floor(diffHours / 24);
+
+        if (diffMins < 1) return "Just now";
+        if (diffMins < 60) return `${diffMins}m ago`;
+        if (diffHours < 24) return `${diffHours}h ago`;
+        if (diffDays < 7) return `${diffDays}d ago`;
+
+        const options = { month: "short", day: "numeric" };
+        return date.toLocaleDateString("en-US", options);
+      }
+
+      function getNotificationIcon(type) {
+        switch (type) {
+          case "Pickup Alert (User)":
+            return "local_shipping";
+          case "Weather Reschedule (User)":
+            return "wb_sunny";
+          case "Rescheduling (User)":
+            return "event";
+          default:
+            return "notifications";
+        }
+      }
+
+      async function loadNotifications(filter = "all") {
+        const notificationsList = document.getElementById("notifications-list");
+        notificationsList.innerHTML =
+          '<div class="loader"><div class="loader-spinner"></div></div>';
+
+        const session = checkSession();
+        if (!session) return;
+
+        try {
+          // Get user details including role
+          const userDoc = await db.collection("users").doc(session.uid).get();
+          const userData = userDoc.exists ? userDoc.data() : { role: "user" }; // Default to 'user' if not found
+
+          let notificationsQuery = db
+            .collection("notifications")
+            .orderBy("createdAt", "desc");
+
+          // Get user's inventory items to filter notifications
+          const inventoryQuerySnapshot = await db
+            .collection("inventory")
+            .where("uid", "==", session.uid)
+            .get();
+
+          const userInventoryIds = [];
+          inventoryQuerySnapshot.forEach((doc) => {
+            userInventoryIds.push(doc.id);
+          });
+
+          // Fetch all notifications
+          const notificationsSnapshot = await notificationsQuery.get();
+          let notifications = [];
+
+          notificationsSnapshot.forEach((doc) => {
+            const notificationData = doc.data();
+            const notificationId = doc.id;
+
+            // Check if the notification type is for users
+            if (
+              notificationData.type === "Weather Reschedule (User)" ||
+              notificationData.type === "Rescheduling (User)" ||
+              (notificationData.type === "Pickup Alert (User)" &&
+                notificationData.relatedInventory &&
+                userInventoryIds.includes(notificationData.relatedInventory))
+            ) {
+              notifications.push({
+                id: notificationId,
+                ...notificationData,
+              });
+            }
+          });
+
+          // Apply filters
+          if (filter !== "all") {
+            if (filter === "unread") {
+              notifications = notifications.filter(
+                (notification) => !notification.isRead
+              );
+            } else {
+              notifications = notifications.filter(
+                (notification) => notification.type === filter
+              );
+            }
+          }
+
+          // Display notifications
+          if (notifications.length === 0) {
+            notificationsList.innerHTML = `
+                    <div class="notification-empty">
+                      <i class="material-icons">notifications_off</i>
+                      <p>No notifications to display</p>
+                    </div>
+                  `;
+          } else {
+            notificationsList.innerHTML = "";
+
+            notifications.forEach((notification) => {
+              const notificationCard = document.createElement("div");
+              notificationCard.className = "notification-card";
+              notificationCard.dataset.id = notification.id;
+
+              notificationCard.innerHTML = `
+                      <div class="notification-icon">
+                        <i class="material-icons">${getNotificationIcon(
+                          notification.type
+                        )}</i>
+                      </div>
+                      <div class="notification-content">
+                        <div class="notification-header">
+                          <div class="notification-title">${notification.type.replace(
+                            " (User)",
+                            ""
+                          )}</div>
+                          <div class="notification-time">${formatDatetime(
+                            notification.createdAt
+                          )}</div>
+                        </div>
+                        <div class="notification-message">${
+                          notification.message
+                        }</div>
+                        ${
+                          notification.relatedInventory
+                            ? `<div class="notification-related">Related to inventory #${notification.relatedInventory.substring(
+                                0,
+                                8
+                              )}</div>`
+                            : ""
+                        }
+                      </div>
+                      ${
+                        !notification.isRead
+                          ? '<div class="unread-indicator"></div>'
+                          : ""
+                      }
+                    `;
+
+              // Mark notification as read when clicked
+              notificationCard.addEventListener("click", async () => {
+                if (!notification.isRead) {
+                  await db
+                    .collection("notifications")
+                    .doc(notification.id)
+                    .update({
+                      isRead: true,
+                    });
+
+                  const unreadIndicator =
+                    notificationCard.querySelector(".unread-indicator");
+                  if (unreadIndicator) {
+                    unreadIndicator.remove();
+                  }
+
+                  notification.isRead = true;
+                }
+
+                // If related to inventory, navigate to inventory details
+                if (notification.relatedInventory) {
+                  // You can add navigation to inventory details here
+                  // window.location.href = `inventory-details.html?id=${notification.relatedInventory}`;
+                }
+              });
+
+              notificationsList.appendChild(notificationCard);
+            });
+          }
+        } catch (error) {
+          console.error("Error loading notifications:", error);
+          notificationsList.innerHTML = `
+                  <div class="notification-empty">
+                    <i class="material-icons">error_outline</i>
+                    <p>Error loading notifications</p>
+                  </div>
+                `;
+        }
+      }
+
+      async function markAllAsRead() {
+        const session = checkSession();
+        if (!session) return;
+
+        try {
+          const inventoryQuerySnapshot = await db
+            .collection("inventory")
+            .where("uid", "==", session.uid)
+            .get();
+
+          const userInventoryIds = [];
+          inventoryQuerySnapshot.forEach((doc) => {
+            userInventoryIds.push(doc.id);
+          });
+
+          const notificationsSnapshot = await db
+            .collection("notifications")
+            .get();
+
+          const batch = db.batch();
+          let updatedCount = 0;
+
+          notificationsSnapshot.forEach((doc) => {
+            const notificationData = doc.data();
+
+            const needsUpdate =
+              !("isRead" in notificationData) ||
+              notificationData.isRead === false;
+
+            if (
+              needsUpdate &&
+              (!notificationData.relatedInventory ||
+                userInventoryIds.includes(notificationData.relatedInventory))
+            ) {
+              batch.update(doc.ref, { isRead: true });
+              updatedCount++;
+            }
+          });
+
+          if (updatedCount > 0) {
+            await batch.commit();
+            loadNotifications(currentFilter);
+          }
+        } catch (error) {
+          console.error("Error marking notifications as read:", error);
+        }
+      }
+      let currentFilter = "all";
+
+      document.addEventListener("DOMContentLoaded", function () {
+        auth.onAuthStateChanged((user) => {
+          if (user) {
+            createSession(user);
+            loadNotifications(currentFilter);
+          } else {
+            const session = checkSession();
+            if (!session) {
+              window.location.href = "login.html";
+            } else {
+              loadNotifications(currentFilter);
+            }
+          }
+        });
+
+        // Filter buttons
+        const filterButtons = document.querySelectorAll(".filter-button");
+        filterButtons.forEach((button) => {
+          button.addEventListener("click", () => {
+            filterButtons.forEach((btn) => btn.classList.remove("active"));
+            button.classList.add("active");
+            currentFilter = button.dataset.filter;
+            loadNotifications(currentFilter);
+          });
+        });
+
+        // Mark all as read button
+        document
+          .getElementById("mark-all-read")
+          .addEventListener("click", markAllAsRead);
+
+        // Back button
+        document.getElementById("back-btn").addEventListener("click", () => {
+          window.history.back();
+        });
+
+        // Navigation buttons
+        document.getElementById("home-btn").addEventListener("click", () => {
+          window.location.href = "main_page.html";
+        });
+
+        document.getElementById("chat-btn").addEventListener("click", () => {
+          window.location.href = "chat_list.html";
+        });
+
+        document.getElementById("add-btn").addEventListener("click", () => {
+          window.location.href = "bucket.html";
+        });
+
+        document
+          .getElementById("tracking-btn")
+          .addEventListener("click", () => {
+            window.location.href = "tracking.html";
+          });
+
+        document.getElementById("profile-btn").addEventListener("click", () => {
+          window.location.href = "profile.html";
+        });
+      });
+    </script>
+  </body>
+</html>

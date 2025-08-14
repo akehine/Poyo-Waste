@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=MuseoModerno:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+      rel="stylesheet"
+    />
+    <title>Poyo Waste</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body,
+      html {
+        height: 100%;
+      }
+
+      .container {
+        position: relative;
+        height: 100vh;
+        background-image: url(user-image/back.png);
+        overflow: hidden;
+      }
+
+      .header {
+        padding: 50px 40px;
+        padding-left: 80px;
+        color: rgb(103, 103, 103);
+        font-size: 23px;
+        font-weight: 400;
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+      .content {
+        position: absolute;
+        top: 120px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: white;
+        border-top-left-radius: 35px;
+        border-top-right-radius: 35px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        /* Animation properties */
+        transform: translateY(100%);
+        transition: transform 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .content.active {
+        transform: translateY(0);
+      }
+
+      .scrollable-content {
+        flex: 1;
+        overflow-y: auto;
+        padding-bottom: 100px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .item {
+        background-color: #f9f9f9;
+        border-radius: 15px;
+        padding: 12px;
+        padding-top: 14px;
+        padding-bottom: 14px;
+        margin: 12px 0;
+        position: relative;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.06);
+        width: 90%;
+        max-width: 400px;
+      }
+
+      .item-number {
+        position: absolute;
+        left: -10px;
+        top: 14px;
+        width: 30px;
+        height: 30px;
+        background-color: #8bc34a;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: bold;
+        font-size: 14px;
+      }
+
+      .item-line {
+        position: absolute;
+        left: 0px;
+        top: 44px;
+        bottom: 14px;
+        width: 2px;
+        background-color: #8bc34a;
+      }
+
+      .item-title {
+        color: #4e8440;
+        font-size: 20px;
+        font-weight: bold;
+        margin-left: 26px;
+        margin-bottom: 6px;
+      }
+
+      .item-details {
+        margin-left: 26px;
+        line-height: 1.4;
+        color: #444;
+        font-size: 14px;
+      }
+
+      .item-notes {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 8px;
+        margin-left: 26px;
+        font-size: 13px;
+      }
+
+      .delete-btn {
+        background-color: #f47373;
+        color: white;
+        border: none;
+        padding: 6px 16px;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 12px;
+      }
+
+      .add-more-btn {
+        background-color: #8bc34a;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 25px;
+        margin: 20px auto;
+        display: block;
+        cursor: pointer;
+        font-size: 14px;
+        width: 50%;
+        max-width: 200px;
+        text-align: center;
+      }
+
+      .button-container {
+        margin-top: 20px;
+        position: sticky;
+        bottom: 0;
+        background-color: white;
+        padding: 15px 0;
+        width: 100%;
+      }
+
+      .continue-btn {
+        background-color: #4e703a;
+        color: white;
+        border: none;
+        padding: 15px;
+        border-radius: 10px;
+        width: 100%;
+        font-size: 18px;
+        cursor: pointer;
+      }
+
+      .back-button {
+        width: 40px;
+        height: 40px;
+        background-color: white;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        position: absolute;
+        left: 20px;
+      }
+      .back-arrow {
+        width: 20px;
+        height: 20px;
+        color: #4e703a;
+      }
+
+      .empty-bucket {
+        text-align: center;
+        padding: 40px 20px;
+        color: #666;
+        font-size: 18px;
+        width: 100%;
+        max-width: 400px;
+        margin: 0 auto;
+      }
+
+      .status-badge {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 10px;
+        font-size: 12px;
+        margin-left: 5px;
+        font-weight: 500;
+      }
+
+      .status-pending {
+        background-color: #ffd54f;
+        color: #5d4037;
+      }
+
+      .status-scheduled {
+        background-color: #81c784;
+        color: #1b5e20;
+      }
+
+      .status-on-delivery {
+        background-color: #64b5f6;
+        color: #0d47a1;
+      }
+
+      .status-delivered {
+        background-color: #7986cb;
+        color: #1a237e;
+      }
+
+      .status-processed {
+        background-color: #4db6ac;
+        color: #004d40;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <div class="back-button" id="back-btn">
+          <svg
+            class="back-arrow"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+          </svg>
+        </div>
+        Your Bucket
+      </div>
+
+      <div class="content">
+        <div class="scrollable-content" id="items-container">
+          <div
+            class="empty-bucket"
+            id="empty-bucket-message"
+            style="display: none"
+          >
+            <p>No items added to your bucket yet.</p>
+          </div>
+        </div>
+
+        <div class="button-container">
+          <button class="add-more-btn" id="add-more-btn">Add More</button>
+          <button class="continue-btn" id="continue-btn">Continue</button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+      import {
+        getAuth,
+        onAuthStateChanged,
+      } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
+      import {
+        getFirestore,
+        collection,
+        query,
+        where,
+        getDocs,
+        doc,
+        deleteDoc,
+      } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyDgoc4Zx064nL1iydJbccI692HDpu8gLLE",
+        authDomain: "capstone-project-312dc.firebaseapp.com",
+        projectId: "capstone-project-312dc",
+        storageBucket: "capstone-project-312dc.firebasestorage.app",
+        messagingSenderId: "82712440613",
+        appId: "1:82712440613:web:124a86e48a3b9c3e6bf4cc",
+        measurementId: "G-YFF9RVYJ9C",
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+
+      document.addEventListener("DOMContentLoaded", function () {
+        // Animate the content container
+        setTimeout(function () {
+          document.querySelector(".content").classList.add("active");
+        }, 300);
+
+        // Set up event listeners
+        const backButton = document.getElementById("back-btn");
+        const addMoreButton = document.getElementById("add-more-btn");
+        const continueButton = document.getElementById("continue-btn");
+
+        if (backButton) {
+          backButton.addEventListener("click", function () {
+            window.location.href = "main_page.html";
+          });
+        }
+
+        if (addMoreButton) {
+          addMoreButton.addEventListener("click", function () {
+            window.location.href = "add_item.html";
+          });
+        }
+
+        if (continueButton) {
+          continueButton.addEventListener("click", function () {
+            if (document.querySelectorAll(".item").length > 0) {
+              window.location.href = "delivery_details.html";
+            } else {
+              alert("Please add at least one item to continue.");
+            }
+          });
+        }
+
+        onAuthStateChanged(auth, (user) => {
+          if (user) {
+            loadUserInventory(user.uid);
+          } else {
+            window.location.href = "login.html";
+          }
+        });
+      });
+
+      async function loadUserInventory(userId) {
+        try {
+          const itemsContainer = document.getElementById("items-container");
+          const emptyBucketMessage = document.getElementById(
+            "empty-bucket-message"
+          );
+
+          const inventoryQuery = query(
+            collection(db, "inventory"),
+            where("uid", "==", userId),
+            where("status", "==", "Pending")
+          );
+
+          const querySnapshot = await getDocs(inventoryQuery);
+          let itemCount = 0;
+
+          // Clear existing items (except empty message)
+          const existingItems = itemsContainer.querySelectorAll(".item");
+          existingItems.forEach((item) => item.remove());
+
+          // Add items from query results
+          querySnapshot.forEach((doc) => {
+            itemCount++;
+            const itemData = doc.data();
+            const itemElement = createItemElement(doc.id, itemData, itemCount);
+
+            // Insert before the empty message
+            if (emptyBucketMessage) {
+              itemsContainer.insertBefore(itemElement, emptyBucketMessage);
+            } else {
+              itemsContainer.appendChild(itemElement);
+            }
+          });
+
+          // Show/hide empty bucket message
+          if (itemCount === 0) {
+            emptyBucketMessage.style.display = "block";
+          } else {
+            emptyBucketMessage.style.display = "none";
+          }
+        } catch (error) {
+          console.error("Error loading inventory: ", error);
+          alert("Error loading your items. Please try again later.");
+        }
+      }
+
+      function createItemElement(itemId, itemData, itemNumber) {
+        const itemDiv = document.createElement("div");
+        itemDiv.className = "item";
+        itemDiv.setAttribute("data-id", itemId);
+
+        // Get status class
+        const statusClass = getStatusClass(itemData.status);
+
+        // Build item HTML
+        itemDiv.innerHTML = `
+                <div class="item-number">${itemNumber}</div>
+                <div class="item-line"></div>
+                <div class="item-title">
+                    ${itemData.category}
+                    <span class="status-badge ${statusClass}">${
+          itemData.status
+        }</span>
+                </div>
+                <div class="item-details">
+                    ${itemData.model ? `Model Name: ${itemData.model}<br>` : ""}
+                    ${itemData.amount ? `Amount: ${itemData.amount}<br>` : ""}
+                    ${
+                      itemData.condition
+                        ? `Condition: ${itemData.condition}<br>`
+                        : ""
+                    }
+                    ${
+                      itemData.defect
+                        ? `Defect: ${itemData.defect}`
+                        : "Defect: None"
+                    }
+                </div>
+                <div class="item-notes">
+                    <span>Additional Notes: ${
+                      itemData.additionalNotes || "None"
+                    }</span>
+                    <button class="delete-btn" data-id="${itemId}">delete</button>
+                </div>
+            `;
+
+        // Add event listener for delete button
+        const deleteBtn = itemDiv.querySelector(".delete-btn");
+        deleteBtn.addEventListener("click", function (e) {
+          e.stopPropagation();
+          const itemId = this.getAttribute("data-id");
+          deleteInventoryItem(itemId);
+        });
+
+        return itemDiv;
+      }
+
+      function getStatusClass(status) {
+        switch (status) {
+          case "Pending":
+            return "status-pending";
+          case "Scheduled":
+            return "status-scheduled";
+          case "On Delivery":
+            return "status-on-delivery";
+          case "Delivered":
+            return "status-delivered";
+          case "Processed":
+            return "status-processed";
+          default:
+            return "";
+        }
+      }
+
+      async function deleteInventoryItem(itemId) {
+        if (confirm("Are you sure you want to delete this item?")) {
+          try {
+            await deleteDoc(doc(db, "inventory", itemId));
+
+            // Refresh the user's inventory
+            const user = auth.currentUser;
+            if (user) {
+              loadUserInventory(user.uid);
+            }
+          } catch (error) {
+            console.error("Error deleting item: ", error);
+            alert("Error deleting item. Please try again.");
+          }
+        }
+      }
+    </script>
+  </body>
+</html>

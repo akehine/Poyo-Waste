@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=MuseoModerno:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <title>Poyo Waste</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        background-color: white;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .header {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        background-color: white;
+        border-bottom: 1px solid #e0e0e0;
+      }
+
+      .back-button {
+        color: #999;
+        margin-right: 15px;
+        font-size: 24px;
+        cursor: pointer;
+      }
+
+      .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #e0e0e0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-right: 15px;
+        overflow: hidden
+      }
+
+      .avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .chat-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #333;
+      }
+
+      .chat-container {
+        flex: 1;
+        padding: 15px;
+        overflow-y: auto;
+        background-color: #f9f9f9;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .message {
+        max-width: 70%;
+        padding: 12px 15px;
+        border-radius: 18px;
+        font-size: 15px;
+        line-height: 1.4;
+      }
+
+      .user-message {
+        align-self: flex-end;
+        background-color: #e9fde3;
+        color: #333;
+        border-bottom-right-radius: 5px;
+      }
+
+      .other-message {
+        align-self: flex-start;
+        background-color: #e8e8e8;
+        color: #333;
+        border-bottom-left-radius: 5px;
+      }
+
+      .input-container {
+        padding: 15px;
+        padding-bottom: 25px;
+        padding-top: 25px;
+        background-color: #f9f9f9;
+        border-top: 1px solid #e0e0e0;
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .message-input {
+        flex: 1;
+        padding: 15px;
+        border: none;
+        border-radius: 25px;
+        background-color: #efefef;
+        font-size: 15px;
+        color: #333;
+        outline: none;
+        margin-right: 10px;
+      }
+
+      .message-input::placeholder {
+        color: #999;
+      }
+
+      .send-button {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #4caf50;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        border: none;
+      }
+
+      .send-arrow {
+        width: 20px;
+        height: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <div class="back-button">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M15 18l-6-6 6-6" />
+        </svg>
+      </div>
+      <div class="avatar">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="22"
+          height="22"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="#888"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="default-avatar"
+        >
+          <path
+            d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
+          ></path>
+          <polyline points="3.29 7 12 12 20.71 7"></polyline>
+          <line x1="12" y1="22" x2="12" y2="12"></line>
+        </svg>
+      </div>
+      <div class="chat-title"></div>
+    </div>
+
+    <div class="chat-container"></div>
+
+    <div class="input-container">
+      <input
+        type="text"
+        class="message-input"
+        placeholder="Write a message..."
+      />
+      <button class="send-button">
+        <svg
+          class="send-arrow"
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="white"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M5 12h14M12 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-auth-compat.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Your Firebase configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyDgoc4Zx064nL1iydJbccI692HDpu8gLLE",
+          authDomain: "capstone-project-312dc.firebaseapp.com",
+          projectId: "capstone-project-312dc",
+          storageBucket: "capstone-project-312dc.firebasestorage.app",
+          messagingSenderId: "82712440613",
+          appId: "1:82712440613:web:124a86e48a3b9c3e6bf4cc",
+          measurementId: "G-YFF9RVYJ9C",
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // Define DOM elements
+        const chatContainer = document.querySelector(".chat-container");
+        const messageInput = document.querySelector(".message-input");
+        const sendButton = document.querySelector(".send-button");
+        const chatTitle = document.querySelector(".chat-title");
+        const backButton = document.querySelector(".back-button");
+        const avatar = document.querySelector(".avatar");
+
+        // Get chat ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const chatId = urlParams.get("chatId");
+        let currentUser = null;
+        let chatData = null;
+
+        // Cache for user display names to avoid redundant fetches
+        const userDisplayNames = {};
+        const userProfilePictures = {}; // Add cache for profile pictures
+
+        // No chat ID, redirect to chat list
+        if (!chatId) {
+          console.error("No chat ID provided");
+          window.location.href = "chat_list.html";
+          return;
+        }
+
+        // Function to get user's full name from users collection
+        async function getUserFullName(userId) {
+          // Check cache first
+          if (userDisplayNames[userId]) {
+            return userDisplayNames[userId];
+          }
+
+          try {
+            // Get from Firestore users collection
+            const userDoc = await db.collection("users").doc(userId).get();
+            if (userDoc.exists && userDoc.data().fullname) {
+              userDisplayNames[userId] = userDoc.data().fullname;
+              return userDisplayNames[userId];
+            }
+
+            // Fallback if not found
+            return "User";
+          } catch (error) {
+            console.error("Error fetching user fullname:", error);
+            return "User";
+          }
+        }
+
+        // Function to get user's profile picture from users collection
+        async function getUserProfilePicture(userId) {
+          // Check cache first
+          if (userProfilePictures[userId]) {
+            return userProfilePictures[userId];
+          }
+
+          try {
+            // Get from Firestore users collection
+            const userDoc = await db.collection("users").doc(userId).get();
+            if (userDoc.exists && userDoc.data().profile) {
+              userProfilePictures[userId] = userDoc.data().profile;
+              return userProfilePictures[userId];
+            }
+
+            // Return null if not found
+            return null;
+          } catch (error) {
+            console.error("Error fetching user profile picture:", error);
+            return null;
+          }
+        }
+
+        // Format timestamp for messages
+        function formatTime(timestamp) {
+          if (!timestamp) return "";
+
+          const date = timestamp.toDate();
+          const now = new Date();
+          const isToday =
+            date.getDate() === now.getDate() &&
+            date.getMonth() === now.getMonth() &&
+            date.getFullYear() === now.getFullYear();
+
+          if (isToday) {
+            return date.toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            });
+          } else {
+            return `${
+              date.getMonth() + 1
+            }/${date.getDate()} ${date.toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            })}`;
+          }
+        }
+
+        // Load chat details using getUserFullName method
+        async function loadChatDetails() {
+          try {
+            const doc = await db.collection("chats").doc(chatId).get();
+
+            if (doc.exists) {
+              chatData = doc.data();
+
+              // Get dynamic chat title
+              let displayTitle = chatData.title || "Chat";
+              let otherUserId = null;
+
+              // For direct chats, show the other user's name using getUserFullName
+              if (
+                chatData.type === "direct" &&
+                chatData.participants.length === 2
+              ) {
+                // Find the other participant's ID
+                otherUserId = chatData.participants.find(
+                  (id) => id !== currentUser.uid
+                );
+
+                // Get the other user's full name from the users collection
+                if (otherUserId) {
+                  displayTitle = await getUserFullName(otherUserId);
+                }
+              } else if (chatData.groupName) {
+                // For group chats, use the group name
+                displayTitle = chatData.groupName;
+              }
+
+              // Set the title
+              chatTitle.textContent = displayTitle;
+
+              // Set avatar color and image
+              if (otherUserId) {
+                // Try to get profile picture
+                const profilePictureUrl = await getUserProfilePicture(otherUserId);
+                
+                if (profilePictureUrl) {
+                  // Clear default content and set image
+                  avatar.innerHTML = `<img src="${profilePictureUrl}" alt="${displayTitle}">`;
+                } else {
+                  // Set default avatar with color based on name
+                  if (displayTitle.toLowerCase().includes("recycling")) {
+                    avatar.style.backgroundColor = "#d7d7d7";
+                  } else if (displayTitle.toLowerCase().includes("poyo")) {
+                    avatar.style.backgroundColor = "#2e6548";
+                  } else {
+                    avatar.style.backgroundColor = "#9CCC65";
+                  }
+                }
+              }
+
+              // Reset unread count for current user
+              if (
+                currentUser &&
+                chatData.unreadCount &&
+                chatData.unreadCount[currentUser.uid] > 0
+              ) {
+                const updateData = {};
+                updateData[`unreadCount.${currentUser.uid}`] = 0;
+
+                db.collection("chats")
+                  .doc(chatId)
+                  .update(updateData)
+                  .catch((error) =>
+                    console.error("Error resetting unread count:", error)
+                  );
+              }
+            } else {
+              console.error("Chat not found");
+              window.location.href = "chat_list.html";
+            }
+          } catch (error) {
+            console.error("Error getting chat details:", error);
+          }
+        }
+
+        // Load messages for this chat
+        function loadMessages() {
+          db.collection("messages")
+            .where("chatId", "==", chatId)
+            .orderBy("timestamp", "asc")
+            .onSnapshot(
+              (snapshot) => {
+                // Process new messages
+                snapshot.docChanges().forEach((change) => {
+                  if (change.type === "added" || change.type === "modified") {
+                    const message = change.doc.data();
+                    const messageId = change.doc.id;
+
+                    // Check if message element already exists
+                    const existingMessage = document.getElementById(
+                      `msg-${messageId}`
+                    );
+                    if (existingMessage) {
+                      // Update existing message if needed
+                      return;
+                    }
+
+                    // Create new message element
+                    const messageElement = document.createElement("div");
+                    messageElement.id = `msg-${messageId}`;
+                    messageElement.className = `message ${
+                      message.sender === currentUser.uid
+                        ? "user-message"
+                        : "other-message"
+                    }`;
+
+                    // Create message text
+                    messageElement.textContent = message.text;
+
+                    // Append to chat container
+                    chatContainer.appendChild(messageElement);
+
+                    // Mark message as read for current user
+                    if (currentUser && message.sender !== currentUser.uid) {
+                      const readUpdate = {};
+                      readUpdate[`read.${currentUser.uid}`] = true;
+
+                      db.collection("messages")
+                        .doc(messageId)
+                        .update(readUpdate)
+                        .catch((error) =>
+                          console.error("Error marking message as read:", error)
+                        );
+                    }
+                  }
+                });
+
+                // Scroll to bottom
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+              },
+              (error) => {
+                console.error("Error loading messages:", error);
+              }
+            );
+        }
+
+        // Send a message
+        function sendMessage() {
+          const text = messageInput.value.trim();
+          if (!text || !currentUser || !chatId) return;
+
+          const newMessage = {
+            chatId: chatId,
+            sender: currentUser.uid,
+            text: text,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+          };
+
+          // Initialize read status for all participants
+          newMessage.read = {};
+          if (chatData && chatData.participants) {
+            chatData.participants.forEach((userId) => {
+              newMessage.read[userId] = userId === currentUser.uid;
+            });
+          }
+
+          // Add message to Firestore
+          db.collection("messages")
+            .add(newMessage)
+            .then(() => {
+              // Clear input field
+              messageInput.value = "";
+
+              // Update chat's last message and time
+              const chatUpdate = {
+                lastMessage: text,
+                lastMessageTime:
+                  firebase.firestore.FieldValue.serverTimestamp(),
+              };
+
+              // Update unread counts for other participants
+              if (chatData && chatData.participants) {
+                chatData.participants.forEach((userId) => {
+                  if (userId !== currentUser.uid) {
+                    chatUpdate[`unreadCount.${userId}`] =
+                      firebase.firestore.FieldValue.increment(1);
+                  }
+                });
+              }
+
+              // Update chat document
+              return db.collection("chats").doc(chatId).update(chatUpdate);
+            })
+            .catch((error) => {
+              console.error("Error sending message:", error);
+            });
+        }
+
+        // Event listeners
+        sendButton.addEventListener("click", sendMessage);
+
+        messageInput.addEventListener("keypress", function (e) {
+          if (e.key === "Enter") {
+            sendMessage();
+          }
+        });
+
+        backButton.addEventListener("click", function () {
+          window.location.href = "chat_list.html";
+        });
+
+        // Check authentication state
+        auth.onAuthStateChanged((user) => {
+          if (user) {
+            currentUser = {
+              uid: user.uid,
+              displayName: user.displayName || user.email,
+            };
+            console.log("User authenticated:", user.uid);
+            loadChatDetails();
+            loadMessages();
+          } else {
+            console.log("No user logged in, redirecting to login");
+            window.location.href = "login.html";
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

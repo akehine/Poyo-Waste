@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script type="module" src="Javascript/main_page.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=MuseoModerno:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body,
+      html {
+        height: 100%;
+        background-image: linear-gradient(to bottom, #fdf1a4, #a0d172, #79c769);
+      }
+
+      .container {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        background-color: white;
+        border-radius: 50px 50px 0 0;
+        padding-bottom: 50px;
+        position: fixed; 
+        top: 52%; 
+        left: 50%;
+        transform: translateX(-50%);
+        transition: top 0.7s ease-out; 
+        z-index: 10;
+        overflow-y: auto; 
+      }
+
+      .container.slide-up {
+        top: 80px; 
+      }
+
+      .top-section {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 350px;
+        z-index: 10;
+      }
+
+      header {
+        padding: 20px;
+        position: relative;
+        color: white;
+        padding-top: 40px;
+        padding-left: 40px;
+        padding-right: 40px;
+      }
+
+      .header-content {
+        max-width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        align-items: top;
+        gap: 60%;
+      }
+
+      .header-text h1 {
+        font-size: 22px;
+        font-weight: 600;
+        font-weight: bold;
+      }
+
+      .header-text p {
+        font-size: 11px;
+        opacity: 0.8;
+      }
+
+      .more-menu {
+        position: relative;
+        cursor: pointer;
+        width: 40px;
+        height: 40px;
+        background-color: #f1f1f1;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: all 0.3s ease;
+        z-index: 100;
+      }
+
+      .three-dots {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 5px;
+        height: 20px;
+      }
+
+      .dot {
+        width: 5px;
+        height: 5px;
+        background-color: #666;
+        border-radius: 50%;
+      }
+
+      .slide-menu {
+        position: absolute;
+        top: 50px;
+        right: 0;
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        width: 150px;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s;
+        z-index: 100;
+      }
+
+      .slide-menu.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .menu-item {
+        display: flex;
+        align-items: center;
+        padding: 12px 15px;
+        transition: background-color 0.2s;
+        color:rgb(103, 103, 103);
+      }
+
+      .material-icons {
+        color: #1a5018;
+      }
+
+      .menu-item:hover {
+        background-color: rgba(46, 125, 50, 0.1);
+      }
+
+      .menu-item i {
+        margin-right: 10px;
+        font-size: 18px;
+      }
+
+      .menu-item span {
+        font-size: 14px;
+      }
+
+      .menu-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.3);
+        z-index: 90;
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      .menu-overlay.active {
+        visibility: visible;
+        opacity: 1;
+        width: 100%;
+        height: 100%;
+      }
+
+      .view-analytics {
+        color: white;
+        text-decoration: underline;
+        font-size: 14px;
+        display: block;
+      }
+
+      .action-cards {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        padding: 30px;
+        padding-top: 30px;
+      }
+
+      .action-card {
+        border-radius: 20px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        max-height: 250px;
+        padding-top: 50px;
+        padding-bottom: 30px;
+      }
+
+      .tracking-card {
+        background-color: #212521;
+        color: white;
+      }
+
+      .recycle-card {
+      background: url('user-image/test2.png') no-repeat center center;
+      background-size: 100% 100%; 
+      color: black;
+      }
+
+      .action-card h3 {
+        font-size: 18px;
+        font-weight: 450;
+        margin-bottom: 10px;
+      }
+
+      .action-card p {
+        font-size: 10px;
+        opacity: 0.7;
+        margin-bottom: 15px;
+      }
+
+      .action-button {
+        width: 100%;
+        padding-left: 30px;
+        padding-right: 30px;
+        padding-top: 15px;
+        padding-bottom: 15px;
+        border: none;
+        border-radius: 30px;
+        font-weight: 500;
+        font-size: 13px;
+        cursor: pointer;
+      }
+
+      .tracking-button {
+        background-color: #4caf50;
+        color: white;
+        font-size: 12px;
+      }
+
+      .recycle-button {
+        background-color: #2e7d32;
+        color: white;
+        font-size: 12px;
+      }
+
+      .bottom-nav {
+        position: fixed; 
+        bottom: 40px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: white;
+        border-radius: 30px;
+        padding: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        width: 90%;
+        z-index: 20;
+    }
+
+
+      .nav-items-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        padding: 0 10px;
+      }
+
+      .nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border:none;
+        color: #888;
+        transition: color 0.3s ease;
+        opacity: 0.6;
+        width: 50px;
+        text-align: center;
+        padding: 12px;
+        border-radius: 30px;
+
+      }
+
+      .nav-item:hover,
+      .nav-item.active {
+        color: #2e7d32;
+        opacity: 1;
+        background-color: rgba(46, 125, 50, 0.1);
+      }
+
+      .nav-item svg {
+        width: 24px;
+        height: 24px;
+        stroke-width: 1.5;
+      }
+
+      .nav-item span {
+        display: none;
+      }
+
+      .add-button {
+        background-color: #2e7d32;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border:none;
+        color: white;
+        box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
+        position: relative;
+        transition: transform 0.2s ease;
+      }
+
+      .add-button:hover {
+        transform: scale(1.05);
+      }
+
+      .decorative-element {
+        position: absolute;
+        top: 155%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 420px;
+        z-index: 5;
+        opacity: 50%;
+      }
+
+      .plant-hp {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+
+      .plant-hp-container {
+        width: 100%;
+        background-color: #ffffff;
+        height: 12px;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        border: 1px solid white;
+      }
+
+      .plant-hp-bar-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #4CAF50, #8BC34A);
+        width: 0%;
+        transition: width 0.5s ease-in-out;
+        border-radius: 10px;
+      }
+
+      .plant-level-text {
+        font-size: 12px;
+        color: #ffffff;
+        margin-top: 5px;
+        text-align: center;
+      }
+
+      .points-display-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        color: #333;
+        background-color: rgba(255, 255, 255, 0.8);
+        padding: 15px;
+        height: 35px;
+        border-radius: 15px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        margin-top: 3px;
+      }
+
+      .points-display-container img {
+        width: 20px;
+        height: 20px;
+        margin-right: 5px;
+      }
+
+      .mid-section{
+        display: column;
+        justify-content: center;
+      }
+
+      .plant-container{
+        display: flex;
+        justify-content: center;
+      }
+
+      .plant-image-wrapper {
+        position: relative;
+        display: inline-block;
+        width: 100%;
+        max-width: 60%;
+        margin: 20px auto;
+      }
+
+      .plant-image-wrapper img {
+        width: 100%;
+        display: block;
+      }
+
+      .plant-action {
+        position: absolute;
+        top: 65%;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 75px;
+        z-index: 10;
+      }
+
+
+      .price {
+        max-width: 120px;
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 11;
+        display: flex;
+        justify-content: center;
+      }
+
+      .sun-price, .water-price{
+        width: 80px;
+        top: 90%;
+        left: 50%;
+        background-color: white;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 14px;
+      }
+
+      .price-align{
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        font-size: 10px;
+      }
+
+      .price-align img{
+        max-width: 20px;
+      }
+
+      .water-btn button{
+        background-color: #e1edff;
+      }
+
+      .sun-btn button{
+        background-color: #feffe3;
+      }
+
+      
+
+      .action-circle button{
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        border: 5px solid white;
+        position: relative;
+      }
+
+      .water-btn button img {
+        width: 60%;
+        height: auto;
+      }
+
+      .price-align p{
+        margin-top:3px;
+        color:#666;
+      }
+
+      .sun-btn button img{
+        width: 60%;
+        height: auto;
+      }
+
+      /* Animation for growing plant */
+      @keyframes grow {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      .growing {
+        animation: grow 1s ease-in-out;
+      }
+
+    </style>
+    <title>Poyo Waste</title>
+    <style>
+      
+    </style>
+  </head> 
+  <body>
+    <div class="top-section">
+      <header>
+        <div class="header-content">
+        
+          <div class="points-display-container">
+            <img src="user-image/tomato1.png" alt="Points">
+            <span class="points-display">0</span>
+          </div>
+          <div class="more-menu" id="more-menu">
+            <div class="three-dots">
+              <div class="dot"></div>
+              <div class="dot"></div>
+              <div class="dot"></div>
+            </div>
+            <div class="slide-menu" id="slide-menu">
+              <div class="menu-item" id="analytics-btn">
+                <i class="material-icons">analytics</i>
+                <span>Analytics</span>
+              </div>
+              <div class="menu-item" id="chatbot-btn">
+                <i class="material-icons">chat</i>
+                <span>Chatbot</span>
+              </div>
+              <div class="menu-item" id="reward-btn">
+                <i class="material-icons">emoji_events</i>
+                <span>Rewards</span>
+              </div>
+              <div class="menu-item" id="notify-btn">
+                <i class="material-icons">notifications</i>
+                <span>Notifications</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="menu-overlay" id="menu-overlay"></div>
+
+      <div class="mid-section">
+        <div class="price plant-hp">
+          <div class="plant-hp-container">
+            <div class="plant-hp-bar-fill"></div>
+          </div>
+          <div class="plant-level-text">Seedling<br>(0/500)</div>
+        </div>
+        <div class="plant-container">
+          <div class="plant-image-wrapper">
+            <img src="user-image/p2.png" alt="Plant Image" />
+            <div class="plant-action">
+              <div class="action-circle water-btn">
+                <button>
+                  <img src="user-image/water1.png" alt="Water">
+                  <div class="price water-price">
+                    <div class="price-align">
+                    <img src="user-image/tomato1.png">
+                    <p>20</p>
+                  </div>
+                  </div>
+                </button>
+              </div>
+              <div class="plant-hp">
+
+              </div>
+              <div class="action-circle sun-btn">
+                <button>
+                  <img src="user-image/sun1.png" alt="Sun">
+                  <div class="price sun-price">
+                  <div class="price-align">
+                    <img src="user-image/tomato1.png">
+                    <p>30</p>
+                  </div>
+                  </div>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+    <div class="container">
+      <div class="action-cards">
+        <div class="action-card tracking-card">
+          <div>
+            <h3>Tracking <br />e-waste?</h3>
+            <p>Track and regular Updates on its status.</p>
+          </div>
+          <button class="action-button tracking-button" id="track-btn">Track</button>
+        </div>
+        <div class="action-card recycle-card">
+          <div>
+            <h3>Want to recycle?</h3>
+            <p>
+              Deliver your E-waste and Renew it
+              sustainably.
+            </p>
+          </div>
+          <button class="action-button recycle-button" id="recycle-btn">Recycle</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <div class="bottom-nav">
+      <div class="nav-items-container">
+        <button class="nav-item active" id="home-btn">
+          <img src="user-image/home.png" alt="Home" width="24" height="24" />
+          <span>Home</span>
+        </button>
+        <button class="nav-item" id="chat-btn">
+          <img src="user-image/chat.png" alt="Chat" width="24" height="24" />
+          <span>Chat</span>
+        </button>
+        <button class="add-button">
+          <img src="user-image/plus.png" alt="Add" width="24" height="24" />
+        </button>
+        <button class="nav-item" id="tracking-btn">
+          <img
+            src="user-image/tracking.png"
+            alt="List"
+            width="24"
+            height="24"
+          />
+          <span>List</span>
+        </button>
+        <button class="nav-item" id="user-btn">
+          <img
+            src="user-image/profile.png"
+            alt="Profile"
+            width="24"
+            height="24"
+          />
+          <span>Profile</span>
+        </button>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-auth-compat.js"></script>
+
+      <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyDgoc4Zx064nL1iydJbccI692HDpu8gLLE",
+        authDomain: "capstone-project-312dc.firebaseapp.com",
+        projectId: "capstone-project-312dc",
+        storageBucket: "capstone-project-312dc.appspot.com",
+        messagingSenderId: "82712440613",
+        appId: "1:82712440613:web:124a86e48a3b9c3e6bf4cc",
+        measurementId: "G-YFF9RVYJ9C",
+      };
+
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+
+      const getCurrentUserId = () => {
+        return firebase.auth().currentUser ? firebase.auth().currentUser.uid : null;
+      };
+
+
+      const getFirstDayOfMonth = () => {
+        const now = new Date();
+        return new Date(now.getFullYear(), now.getMonth(), 1);
+      };
+
+
+      const updateRecyclingCount = async () => {
+        const userId = getCurrentUserId();
+        
+        if (!userId) {
+          console.error("No user is signed in");
+          return;
+        }
+        
+        const firstDayOfMonth = getFirstDayOfMonth();
+        
+        try {
+          const scheduledQuery = db.collection('inventory')
+            .where('uid', '==', userId)
+            .where('status', '==', 'Scheduled')
+            .where('createdAt', '>=', firstDayOfMonth);
+          
+          const onDeliveryQuery = db.collection('inventory')
+            .where('uid', '==', userId)
+            .where('status', '==', 'On Delivery')
+            .where('createdAt', '>=', firstDayOfMonth);
+          
+          const deliveredQuery = db.collection('inventory')
+            .where('uid', '==', userId)
+            .where('status', '==', 'Delivered')
+            .where('createdAt', '>=', firstDayOfMonth);
+          
+          const processedQuery = db.collection('inventory')
+            .where('uid', '==', userId)
+            .where('status', '==', 'Processed')
+            .where('createdAt', '>=', firstDayOfMonth);
+          
+          const [scheduledSnapshot, onDeliverySnapshot, deliveredSnapshot, processedSnapshot] = await Promise.all([
+            scheduledQuery.get(),
+            onDeliveryQuery.get(),
+            deliveredQuery.get(),
+            processedQuery.get()
+          ]);
+          
+          const waitingForPickupCount = scheduledSnapshot.size;
+          const onDeliveryCount = onDeliverySnapshot.size;
+          const deliveredCount = deliveredSnapshot.size;
+          const processedCount = processedSnapshot.size;
+          
+          const totalRecycledItems = waitingForPickupCount + onDeliveryCount + deliveredCount + processedCount;
+          
+          updateUI(totalRecycledItems);
+          
+          console.log("Recycling count updated:", totalRecycledItems);
+          
+        } catch (error) {
+          console.error("Error fetching recycling count:", error);
+        }
+      };
+
+
+      const updateUI = (totalItems) => {
+  const countElement = document.querySelector('.radial-content h2');
+  if (countElement) {
+    countElement.textContent = totalItems;
+  }
+
+  updateProgressCircle(totalItems);
+  updatePlantStatus(); // Add this line to update plant HP and image
+};
+
+// Function to update plant status based on HP
+const updatePlantStatus = async () => {
+  const userId = getCurrentUserId();
+  if (!userId) return;
+
+  try {
+    const userDoc = await db.collection('users').doc(userId).get();
+    if (!userDoc.exists) return;
+    
+    const userData = userDoc.data();
+    const plantHP = userData.plantHP || 0;
+    const pointsPLANT = userData.pointsPLANT || 0;
+    
+    // Update the plant HP bar
+    const plantHpBar = document.querySelector('.plant-hp-bar-fill');
+    if (plantHpBar) {
+      // Calculate percentage based on current level threshold
+      let percentage;
+      if (plantHP <= 500) {
+        percentage = (plantHP / 500) * 100;
+      } else if (plantHP <= 1000) {
+        percentage = ((plantHP - 500) / 500) * 100;
+      } else {
+        percentage = 100; // Full when above 1000
+      }
+      plantHpBar.style.width = `${percentage}%`;
+    }
+    
+    const plantLevelText = document.querySelector('.plant-level-text');
+      if (plantLevelText) {
+        if (plantHP <= 500) {
+          plantLevelText.innerHTML = `Seedling<br>(${plantHP}/500)`;
+        } else if (plantHP <= 1000) {
+          plantLevelText.innerHTML = `Potted Plant<br>(${plantHP}/1000)`;
+        } else {
+          plantLevelText.innerHTML = `Tree<br>(${plantHP})`;
+        }
+      }
+    
+    // Update plant image based on HP level
+    const plantImage = document.querySelector('.plant-image-wrapper img');
+    if (plantImage) {
+      if (plantHP <= 500) {
+        plantImage.src = "user-image/p2.png";
+      } else if (plantHP <= 1000) {
+        plantImage.src = "user-image/p1.png";
+      } else {
+        plantImage.src = "user-image/tree.png";
+      }
+    }
+    
+    // Update point display
+    const pointsDisplay = document.querySelector('.points-display');
+    if (pointsDisplay) {
+      pointsDisplay.textContent = `${pointsPLANT}`;
+    }
+    
+  } catch (error) {
+    console.error("Error updating plant status:", error);
+  }
+};
+
+// Function to handle water purchase
+const handleWaterPurchase = async () => {
+  const userId = getCurrentUserId();
+  if (!userId) {
+    console.error("No user is signed in");
+    return;
+  }
+  
+  try {
+    // Get current user data
+    const userRef = db.collection('users').doc(userId);
+    const userDoc = await userRef.get();
+    
+    if (!userDoc.exists) {
+      console.error("User document not found");
+      return;
+    }
+    
+    const userData = userDoc.data();
+    const pointsPLANT = userData.pointsPLANT || 0;
+    const plantHP = userData.plantHP || 0;
+    
+    // Check if user has enough points
+    if (pointsPLANT < 20) {
+      alert("Not enough points for water!");
+      return;
+    }
+    
+    // Update user data
+    await userRef.update({
+      pointsPLANT: pointsPLANT - 20,
+      plantHP: plantHP + 15
+    });
+    
+    // Update UI
+    updatePlantStatus();
+    
+  } catch (error) {
+    console.error("Error purchasing water:", error);
+  }
+};
+
+// Function to handle sun purchase
+const handleSunPurchase = async () => {
+  const userId = getCurrentUserId();
+  if (!userId) {
+    console.error("No user is signed in");
+    return;
+  }
+  
+  try {
+    // Get current user data
+    const userRef = db.collection('users').doc(userId);
+    const userDoc = await userRef.get();
+    
+    if (!userDoc.exists) {
+      console.error("User document not found");
+      return;
+    }
+    
+    const userData = userDoc.data();
+    const pointsPLANT = userData.pointsPLANT || 0;
+    const plantHP = userData.plantHP || 0;
+    
+    // Check if user has enough points
+    if (pointsPLANT < 30) {
+      alert("Not enough points for sun!");
+      return;
+    }
+    
+    // Update user data
+    await userRef.update({
+      pointsPLANT: pointsPLANT - 30,
+      plantHP: plantHP + 25
+    });
+    
+    // Update UI
+    updatePlantStatus();
+    
+  } catch (error) {
+    console.error("Error purchasing sun:", error);
+  }
+};
+
+// Function to initialize plant data for new users if needed
+const initializePlantData = async (userId) => {
+  try {
+    const userRef = db.collection('users').doc(userId);
+    const userDoc = await userRef.get();
+    
+    if (userDoc.exists) {
+      const userData = userDoc.data();
+      
+      // Check if plantHP and pointsPLANT already exist
+      if (userData.plantHP === undefined || userData.pointsPLANT === undefined) {
+        await userRef.update({
+          plantHP: userData.plantHP || 0,
+          pointsPLANT: userData.pointsPLANT || 100 // Start with 100 points for plant growth
+        });
+      }
+    }
+  } catch (error) {
+    console.error("Error initializing plant data:", error);
+  }
+};
+
+// Update the auth state changed handler to initialize plant data
+document.addEventListener('DOMContentLoaded', function() {
+  // Add event listeners for water and sun buttons
+  const waterBtn = document.querySelector('.water-btn button');
+  const sunBtn = document.querySelector('.sun-btn button');
+  
+  if (waterBtn) {
+    waterBtn.addEventListener('click', handleWaterPurchase);
+  }
+  
+  if (sunBtn) {
+    sunBtn.addEventListener('click', handleSunPurchase);
+  }
+  
+  firebase.auth().onAuthStateChanged((user) => {
+    if (user) {
+
+      db.collection('users').doc(user.uid).get()
+        .then((doc) => {
+         
+          initializePlantData(user.uid);
+          
+          updateRecyclingCount();
+          updatePlantStatus();
+        })
+        .catch((error) => {
+          console.error("Error fetching user data:", error);
+        });
+    } else {
+      console.log("User is not signed in");
+    }
+  });
+});
+      
+
+        document.addEventListener('DOMContentLoaded', function() {
+          const addButton = document.querySelector('.add-button');
+          const moreMenu = document.getElementById('more-menu');
+          const slideMenu = document.getElementById('slide-menu');
+          const menuOverlay = document.getElementById('menu-overlay');
+          const analyticsBtn = document.getElementById('analytics-btn');
+          const chatbotBtn = document.getElementById('chatbot-btn');
+          const rewardBtn = document.getElementById('reward-btn');
+          const notifyBtn = document.getElementById('notify-btn');
+      
+          moreMenu.addEventListener('click', function(e) {
+            e.stopPropagation();
+            slideMenu.classList.toggle('active');
+            menuOverlay.classList.toggle('active');
+          });
+          
+          menuOverlay.addEventListener('click', function() {
+            slideMenu.classList.remove('active');
+            menuOverlay.classList.remove('active');
+          });
+          
+          analyticsBtn.addEventListener('click', function() {
+            window.location.href = 'analytic.html';
+          });
+          
+          chatbotBtn.addEventListener('click', function() {
+            window.location.href = 'chatbot.html';
+          });
+          
+          rewardBtn.addEventListener('click', function() {
+            window.location.href = 'reward.html';
+          });
+
+          notifyBtn.addEventListener('click', function() {
+            window.location.href = 'notify.html';
+          });
+      
+          addButton.addEventListener('touchstart', function() {
+            window.location.href = 'bucket.html';
+          });
+      
+          document.getElementById("chat-btn").addEventListener("touchstart", function() {
+            window.location.href = "chat_list.html"; 
+          });
+
+          
+        });
+      ;
+
+      document.addEventListener("DOMContentLoaded", function () {
+              const addButton = document.querySelector(".add-button");
+              const homeBtn = document.getElementById("home-btn");
+              const chatBtn = document.getElementById("chat-btn");
+              const trackingBtn = document.getElementById("tracking-btn");
+              const userBtn = document.getElementById("user-btn"); 
+
+              if (homeBtn) {
+                homeBtn.addEventListener("touchstart", function () {
+                  window.location.href = "main_page.html";
+                });
+              }
+
+              if (chatBtn) {
+                chatBtn.addEventListener("touchstart", function () {
+                  window.location.href = "chat_list.html";
+                });
+              }
+
+              if (addButton) {
+                addButton.addEventListener("touchstart", function () {
+                  window.location.href = "bucket.html";
+                });
+              }
+
+              if (trackingBtn) {
+                trackingBtn.addEventListener("touchstart", function () {
+                  window.location.href = "tracking.html";
+                });
+              }
+
+              if (userBtn) { 
+                userBtn.addEventListener("touchstart", function () {
+                  window.location.href = "profile.html";
+                });
+              }
+            }); 
+      </script>
+  </body>
+</html>

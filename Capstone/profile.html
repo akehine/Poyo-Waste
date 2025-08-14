@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=MuseoModerno:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body,
+html {
+  margin: 0 auto;
+  overflow: hidden;
+  background-image: url(user-image/back.png);
+}
+
+.top-section {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 350px;
+  z-index: 10;
+}
+
+.header {
+  padding: 20px;
+  position: relative;
+  color: rgb(103, 103, 103);
+  padding-top: 40px;
+  padding-left: 40px;
+  padding-right: 40px;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 400;
+}
+
+.more-menu {
+  position: relative;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  background-color: #f1f1f1;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease;
+  z-index: 100;
+}
+
+.three-dots {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 5px;
+  height: 20px;
+}
+
+.dot {
+  width: 5px;
+  height: 5px;
+  background-color: #666;
+  border-radius: 50%;
+}
+
+.slide-menu {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  width: 150px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s;
+  z-index: 100;
+}
+
+.slide-menu.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  transition: background-color 0.2s;
+}
+
+.menu-item:hover {
+  background-color: rgba(46, 125, 50, 0.1);
+}
+
+.menu-item i {
+  margin-right: 10px;
+  font-size: 18px;
+}
+
+.menu-item span {
+  font-size: 14px;
+}
+
+.menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 90;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.menu-overlay.active {
+  visibility: visible;
+  opacity: 1;
+  width: 100%;
+  height: 100%;
+}
+
+.mid-section{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.mid-section p{
+    font-size: 13px;
+    color: #888;
+}
+
+
+.top-header, .top{
+    display:flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.top{
+  margin-top: 20px;}
+
+
+.top-header h1{
+    font-weight: 300;
+    font-size: 20px;
+}
+
+.top-header button{
+    padding: 0px 20px;
+    height: 25px;
+    border-radius: 20px;
+    border: 0;
+    background-color: #d2d2d2;
+    color: white;
+    font-size: 11px;
+}
+
+.profile-pic img{
+    width: 9em;
+    margin: 10px;
+    border-radius: 100px;
+}
+
+.name{
+    background-color: white;
+    padding: 40px;
+    border-radius: 20px;
+    text-align: left;
+    width: 80%;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 270px;
+}
+
+.info{
+    background-color: white;
+    border-top-left-radius: 50px;
+    border-top-right-radius: 50px;
+    width: 100%;
+    height: 1050px;
+    padding: 80px 50px;
+    margin-top: 80px;
+}
+
+.info-txt{
+    margin: 10px;
+    
+}
+
+.info-txt p{
+    font-size: 13px;
+}
+
+.info-txt h6{
+    font-size: 13px;
+    font-weight: 500;
+    color: #1a5018;
+}
+
+.sub, .sub-1{
+    margin-left: 43px;
+    margin-bottom: 20px;
+}
+
+.info hr{
+  border-width: 0.2px;
+}
+
+.material-icons{
+  color: #1a5018;
+}
+        
+.bottom-nav {
+  background-color: white;
+  border-radius: 30px;
+  margin: 20px;
+  margin-top: 10px;
+  padding: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  bottom: 20px;
+  width: 90%;
+}
+
+.nav-items-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0 10px;
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border:none;
+  color: #888;
+  transition: color 0.3s ease;
+  opacity: 0.6;
+  width: 50px;
+  text-align: center;
+  padding: 12px;
+  border-radius: 30px;
+
+}
+
+.nav-item:hover,
+.nav-item.active {
+  color: #2e7d32;
+  opacity: 1;
+  background-color: rgba(46, 125, 50, 0.1);
+}
+
+.nav-item svg {
+  width: 24px;
+  height: 24px;
+  stroke-width: 1.5;
+}
+
+.nav-item span {
+  display: none;
+}
+
+.approved{
+  position: fixed;
+  right: 140px;
+  top: 220px;
+  background-color: #4c9250;
+  padding: 6px 7px 0px 5px;
+  align-items: center;
+  border-radius: 30px;
+  z-index: 85;
+}
+
+.approved i{
+  color:white;
+  font-size: 20px;
+}
+
+.add-button {
+  background-color: #2e7d32;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border:none;
+  color: white;
+  box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
+  position: relative;
+  transition: transform 0.2s ease;
+}
+
+.add-button:hover {
+  transform: scale(1.05);
+}
+
+.header-text span{
+  font-size: 23px;
+  font-weight: 400;
+}
+
+.logout-button button{
+  background-color: #212521;
+  color: white;
+  border: none;
+  padding: 15px;
+  border-radius: 10px;
+  width: 100%;
+  font-size: 13px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+    </style>
+  </head>
+
+  <body>
+
+    <div class="top-section">
+      <div class="header">
+        <div class="header-content">
+          <div class="header-text">
+            <span>Profile</span>
+          </div>
+          <div class="more-menu" id="more-menu">
+            <div class="three-dots">
+              <div class="dot"></div>
+              <div class="dot"></div>
+              <div class="dot"></div>
+            </div>
+            <div class="slide-menu" id="slide-menu">
+              <div class="menu-item" id="analytics-btn">
+                <i class="material-icons">analytics</i>
+                <span>Analytics</span>
+              </div>
+              <div class="menu-item" id="chatbot-btn">
+                <i class="material-icons">chat</i>
+                <span>Chatbot</span>
+              </div>
+              <div class="menu-item" id="reward-btn">
+                <i class="material-icons">emoji_events</i>
+                <span>Rewards</span>
+              </div>
+              <div class="menu-item" id="notify-btn">
+                <i class="material-icons">notifications</i>
+                <span>Notifications</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="menu-overlay" id="menu-overlay"></div>
+
+      <div class="mid-section">
+
+        <div class="profile-pic">
+            <div class="approved"><i class="material-icons">check</i></div>
+            <img src="user-image/p.svg">
+        </div>
+
+        <div class="name">
+            <div class="top-header">
+                <h1>Loading...</h1>
+                <button>edit</button>
+            </div>
+            
+            <p>Loading...</p> 
+        </div>
+
+        <div class="info">
+            <div class="info-txt">
+            <div class="top"><i class="material-icons">call</i><h6>Phone Number</h6></div>
+            <p class="sub">Loading...</p>
+        </div>
+            <hr>
+        <div class="info-txt">
+            <div class="top"><i class="material-icons">mail</i><h6>E-mail</h6></div>
+            <p class="sub-1">Loading...</p>
+        </div>
+          <br>
+        <div class="logout-button" id="logout-btn">
+          <button>Log Out</button>
+        </div>
+      </div>
+      </div>
+
+
+      <div class="bottom-nav">
+        <div class="nav-items-container">
+          <button class="nav-item" id="home-btn">
+            <img src="user-image/home.png" alt="Home" width="24" height="24">
+            <span>Home</span>
+          </button>
+          <button class="nav-item" id="chat-btn" >
+            <img src="user-image/chat.png" alt="Chat" width="24" height="24">
+            <span>Chat</span>
+          </button>
+          <button class="add-button">
+            <img src="user-image/plus.png" alt="Add" width="24" height="24">
+          </button>
+          <button class="nav-item" id="tracking-btn">
+            <img src="user-image/tracking.png" alt="List" width="24" height="24">
+            <span>List</span>
+          </button>
+          <button class="nav-item active">
+            <img src="user-image/profile.png" alt="Profile" width="24" height="24">
+            <span>Profile</span>
+          </button>
+        </div>
+      </div>
+
+      <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-app-compat.js"></script>
+      <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore-compat.js"></script>
+      <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-auth-compat.js"></script>
+      
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          const addButton = document.querySelector('.add-button');
+          const moreMenu = document.getElementById('more-menu');
+          const slideMenu = document.getElementById('slide-menu');
+          const menuOverlay = document.getElementById('menu-overlay');
+          const analyticsBtn = document.getElementById('analytics-btn');
+          const chatbotBtn = document.getElementById('chatbot-btn');
+          const rewardBtn = document.getElementById('reward-btn');
+          const notifyBtn = document.getElementById('notify-btn');
+      
+          moreMenu.addEventListener('click', function(e) {
+            e.stopPropagation();
+            slideMenu.classList.toggle('active');
+            menuOverlay.classList.toggle('active');
+          });
+          
+          menuOverlay.addEventListener('click', function() {
+            slideMenu.classList.remove('active');
+            menuOverlay.classList.remove('active');
+          });
+
+          analyticsBtn.addEventListener('click', function() {
+            window.location.href = 'analytic.html';
+          });
+          
+          chatbotBtn.addEventListener('click', function() {
+            window.location.href = 'chatbot.html';
+          });
+          
+          rewardBtn.addEventListener('click', function() {
+            window.location.href = 'reward.html';
+          });
+
+          notifyBtn.addEventListener('click', function() {
+            window.location.href = 'notify.html';
+          });
+      
+          addButton.addEventListener('touchstart', function() {
+            window.location.href = 'bucket.html';
+          });
+      
+          document.getElementById("chat-btn").addEventListener("touchstart", function() {
+            window.location.href = "chat_list.html"; 
+          });
+
+          document.getElementById("logout-btn").addEventListener("touchstart", function() {
+
+          localStorage.removeItem("userSession");
+    
+
+          auth.signOut().then(() => {
+              window.location.href = "index.html";
+          }).catch((error) => {
+              console.error("Error during logout:", error);
+          });
+        });
+      });
+
+      
+        const firebaseConfig = {
+          apiKey: "AIzaSyDgoc4Zx064nL1iydJbccI692HDpu8gLLE",
+          authDomain: "capstone-project-312dc.firebaseapp.com",
+          projectId: "capstone-project-312dc",
+          storageBucket: "capstone-project-312dc.appspot.com",
+          messagingSenderId: "82712440613",
+          appId: "1:82712440613:web:124a86e48a3b9c3e6bf4cc",
+          measurementId: "G-YFF9RVYJ9C",
+        };
+      
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+      
+        function createSession(user) {
+          localStorage.setItem('userSession', JSON.stringify({
+            uid: user.uid,
+            email: user.email,
+            lastLogin: new Date().toISOString()
+          }));
+        }
+      
+        function checkSession() {
+          const sessionData = localStorage.getItem('userSession');
+      
+          if (!sessionData) {
+            window.location.href = 'login.html';
+            return null;
+          }
+      
+          const session = JSON.parse(sessionData);
+      
+          const currentTime = new Date();
+          const sessionTime = new Date(session.lastLogin);
+          const hoursDifference = (currentTime - sessionTime) / (1000 * 60 * 60);
+      
+          if (hoursDifference > 24) {
+            localStorage.removeItem('userSession');
+            window.location.href = 'login.html';
+            return null;
+          }
+      
+          return session;
+        }
+        function updateHeaderContent() {
+    auth.onAuthStateChanged(async (user) => {
+        if (user) {
+            createSession(user);
+    
+            try {
+                const userDocRef = db.collection("users").doc(user.uid);
+                const userDocSnap = await userDocRef.get();
+
+                if (userDocSnap.exists) {
+                    const userData = userDocSnap.data();
+
+                    const fullName = userData.fullname || user.displayName || 'User';
+                    const role = userData.role || 'Role'; // Changed from position to role
+                    const phoneNumber = userData.phone_number || 'Phone Number';
+                    const email = userData.email || 'Email';
+                    const profilePic = userData.profile || 'user-image/profile.png';
+
+                    document.querySelector('.name h1').textContent = fullName;
+                    document.querySelector('.name p').textContent = role; // Changed from position to role
+                    document.querySelector('.sub').textContent = phoneNumber;
+                    document.querySelector('.sub-1').textContent = email;
+
+                    document.querySelector('.profile-pic img').src = profilePic;
+                }
+            } catch (error) {
+                console.error("Error fetching user document:", error);
+            }
+        } else {
+            const session = checkSession();
+            if (!session) {
+                window.location.href = 'login.html';
+            }
+        }
+    });
+}
+
+updateHeaderContent();
+
+document.addEventListener('DOMContentLoaded', function () {
+    const editButton = document.querySelector('.name button');
+
+    editButton.addEventListener('click', async function () {
+        const user = auth.currentUser;
+        if (user) {
+            const userDocRef = db.collection("users").doc(user.uid);
+            const userDocSnap = await userDocRef.get();
+
+            if (userDocSnap.exists) {
+                const userData = userDocSnap.data();
+                
+                localStorage.setItem('userProfile', JSON.stringify({
+                    fullname: userData.fullname || '',
+                    role: userData.role || '', 
+                    phone: userData.phone_number || '',
+                    email: userData.email || ''
+                }));
+
+                window.location.href = 'edit.html';
+            }
+        }
+    });
+});
+
+    document.addEventListener("DOMContentLoaded", function () {
+              const addButton = document.querySelector(".add-button");
+              const homeBtn = document.getElementById("home-btn");
+              const chatBtn = document.getElementById("chat-btn");
+              const trackingBtn = document.getElementById("tracking-btn");
+              const userBtn = document.getElementById("user-btn"); 
+
+              if (homeBtn) {
+                homeBtn.addEventListener("touchstart", function () {
+                  window.location.href = "main_page.html";
+                });
+              }
+
+              if (chatBtn) {
+                chatBtn.addEventListener("touchstart", function () {
+                  window.location.href = "chat_list.html";
+                });
+              }
+
+              if (addButton) {
+                addButton.addEventListener("touchstart", function () {
+                  window.location.href = "bucket.html";
+                });
+              }
+
+              if (trackingBtn) {
+                trackingBtn.addEventListener("touchstart", function () {
+                  window.location.href = "tracking.html";
+                });
+              }
+
+              if (userBtn) { 
+                userBtn.addEventListener("touchstart", function () {
+                  window.location.href = "profile.html";
+                });
+              }
+            }); 
+
+      </script>
+      
+  </body>
+</html>

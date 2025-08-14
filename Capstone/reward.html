@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Poyo Waste</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=MuseoModerno:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background-image: url(user-image/back.png);
+        font-family: "Poppins", sans-serif;
+      }
+
+      .rewards-container {
+        max-width: 480px;
+        margin: 0 auto;
+        position: relative;
+        margin-top: 20px;
+      }
+
+      .user-profile {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      .user-points {
+        margin-bottom: 20px;
+        font-weight: 600;
+        font-size: 1.5rem;
+        text-align: center;
+      }
+
+      .page-title {
+        margin: 0;
+        text-align: center;
+        margin-top: 6px;
+        font-weight: 400;
+        color: #676767;
+        left: 0;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+        font-weight: 600;
+        color: #676767;
+        padding: 20px 40px 0 40px;
+      }
+
+      .badges-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      .badge-item {
+        text-align: center;
+        position: relative;
+        border: 2px solid #dee2e6;
+        border-radius: 8px;
+        padding: 12px 8px;
+        background-color: white;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+
+      .badge-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .badge-icon {
+        width: 100%;
+        max-width: 80px;
+        height: auto;
+        margin-bottom: 8px;
+        transition: transform 0.2s;
+      }
+
+      .badge-item:hover .badge-icon {
+        transform: scale(1.05);
+      }
+
+      .badge-name {
+        font-size: 0.75rem;
+        color: black;
+        margin-top: 5px;
+      }
+
+      .badge-locked {
+        opacity: 0.5;
+        filter: grayscale(1);
+        border-color: #e9ecef;
+        background-color: #f8f9fa;
+      }
+
+      .badge-locked:after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 30px;
+        height: 30px;
+        background-image: url("user-image/lock.png");
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        z-index: 1;
+      }
+
+      .back-button {
+        width: 40px;
+        height: 40px;
+        background-color: white;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        position: absolute;
+        left: 40px;
+        border: none;
+      }
+
+      .container {
+        background-color: white;
+        border-radius: 50px 50px 0 0;
+        width: 100%;
+        padding: 20px;
+        height: 730px;
+      }
+
+      .back-arrow {
+        width: 20px;
+        height: 20px;
+        color: #4e703a;
+      }
+
+      .user-points-container {
+        text-align: center;
+        margin-top: 20px;
+        margin-bottom: 20px;
+      }
+
+      .user-points-container img {
+        width: 100px;
+      }
+
+      .points-label {
+        font-size: 1rem;
+        color: #666;
+        margin-bottom: 5px;
+      }
+
+      .info-button {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        width: 20px;
+        height: 20px;
+        background-color: #f0f0f0;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 1px solid #ccc;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: bold;
+        color: #555;
+        z-index: 2;
+      }
+
+      .popup-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        visibility: hidden;
+        opacity: 0;
+        transition: visibility 0s linear 0.25s, opacity 0.25s;
+      }
+
+      .popup-content {
+        background-color: white;
+        padding: 40px;
+        border-radius: 20px;
+        max-width: 300px;
+        width: 90%;
+        text-align: center;
+        position: relative;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      .popup-close {
+        position: absolute;
+        top: 12px;
+        right: 20px;
+        font-size: 20px;
+        cursor: pointer;
+        color: #555;
+      }
+
+      .popup-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+        background-color: #ea5050;
+        padding: 10px;
+        border-radius: 40px;
+        color: white;
+      }
+
+      .popup-description {
+        margin-bottom: 20px;
+      }
+
+      .popup-points {
+        font-weight: 600;
+        color: #28a745;
+        font-size: 1.1rem;
+        padding: 20px;
+        box-shadow: 0 5px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 20px;
+        background-color: white;
+      }
+
+      .show-popup {
+        visibility: visible;
+        opacity: 1;
+        transition-delay: 0s;
+      }
+
+      .tab-slider-container {
+        padding: 0 40px;
+        padding-bottom: 20px;
+        position: relative;
+      }
+
+      .tab-slider {
+        background-color: #e0e0e0;
+        border-radius: 20px;
+        display: flex;
+        position: relative;
+        height: 42px;
+        width: 270px;
+        margin: 0 auto;
+      }
+
+      .slider-option {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 2;
+        font-size: 14px;
+        cursor: pointer;
+        transition: color 0.3s;
+        border-radius: 16px;
+        left: 0;
+      }
+
+      .slider-option.active {
+        color: white;
+        left: 0;
+      }
+
+      .material-icons {
+        color: #2a7d2a;
+      }
+
+      .slider-background {
+        position: absolute;
+        left: 0px;
+        width: 50%;
+        height: 42px;
+        background-color: #6aaf5c;
+        border-radius: 20px;
+        transition: left 0.3s ease;
+        z-index: 1;
+      }
+
+      .leaderboard-container {
+        display: none;
+      }
+
+      .achievements-container {
+        display: block;
+      }
+
+      .user-ranking {
+        text-align: center;
+        margin-top: 20px;
+        margin-bottom: 20px;
+      }
+
+      .user-ranking-number {
+        font-size: 3rem;
+        font-weight: 700;
+        color: #4e703a;
+        margin: 0;
+        line-height: 1;
+      }
+
+      .user-ranking-text {
+        font-size: 0.9rem;
+        color: #666;
+        margin: 0;
+      }
+
+      .leaderboard-list {
+        margin-top: 30px;
+      }
+
+      .leaderboard-item {
+        display: flex;
+        align-items: center;
+        background-color: white;
+        border-radius: 15px;
+        padding: 10px 15px;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+
+      .leaderboard-rank {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background-color: #4e703a;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: 600;
+        margin-right: 15px;
+      }
+
+      .leaderboard-profile {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 15px;
+      }
+
+      .leaderboard-user-info {
+        flex: 1;
+      }
+
+      .leaderboard-name {
+        font-weight: 600;
+        font-size: 1rem;
+        margin-bottom: 2px;
+      }
+
+      .leaderboard-points {
+        font-size: 0.8rem;
+        color: #666;
+      }
+
+      .top-users {
+        margin-bottom: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="rewards-container">
+      <header>
+        <button id="back-btn" class="back-button">
+          <svg
+            class="back-arrow"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+          </svg>
+        </button>
+
+        <div class="user-profile">
+          <h3 class="page-title">Rewards</h3>
+        </div>
+      </header>
+      <div class="container">
+        <div class="tab-slider-container">
+          <div class="tab-slider">
+            <div class="slider-background"></div>
+            <div
+              class="slider-option active"
+              id="achievements-tab"
+              onclick="toggleSlider(true)"
+            >
+              Achievements
+            </div>
+            <div
+              class="slider-option"
+              id="leaderboard-tab"
+              onclick="toggleSlider(false)"
+            >
+              Leaderboard
+            </div>
+          </div>
+        </div>
+
+        <div id="achievements-container" class="achievements-container">
+          <div class="user-points-container">
+            <img src="user-image/tomato1.png" />
+            <div class="points-label">Currently have</div>
+            <div id="user-points" class="user-points">0 Tomatoes</div>
+          </div>
+
+          <div class="badges-grid" id="badges-container"></div>
+
+          <div id="popup-overlay" class="popup-overlay">
+            <div class="popup-content">
+              <span id="popup-close" class="popup-close">&times;</span>
+              <div id="popup-title" class="popup-title">Badge Title</div>
+              <div id="popup-description" class="popup-description">
+                Badge Description
+              </div>
+              <div id="popup-points" class="popup-points">
+                0 Points Required
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="leaderboard-container" class="leaderboard-container">
+          <div class="user-ranking">
+            <p class="user-ranking-number" id="user-rank">0<sup>th</sup></p>
+            <p class="user-ranking-text">
+              in Top Poyo Waste Contributor Leaderboard
+            </p>
+          </div>
+
+          <div class="leaderboard-list" id="leaderboard-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+      import {
+        getAuth,
+        onAuthStateChanged,
+      } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
+      import {
+        getFirestore,
+        doc,
+        getDoc,
+        collection,
+        query,
+        orderBy,
+        limit,
+        getDocs,
+      } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyDgoc4Zx064nL1iydJbccI692HDpu8gLLE",
+        authDomain: "capstone-project-312dc.firebaseapp.com",
+        projectId: "capstone-project-312dc",
+        storageBucket: "capstone-project-312dc.firebasestorage.app",
+        messagingSenderId: "82712440613",
+        appId: "1:82712440613:web:124a86e48a3b9c3e6bf4cc",
+        measurementId: "G-YFF9RVYJ9C",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+      let currentUserId = null;
+
+      const BADGES = [
+        {
+          id: "recycling-novice",
+          name: "Recycling Novice",
+          image: "user-image/iron.png",
+          description: "Earn 1,000 Tomatoes points",
+          pointsRequired: 1000,
+        },
+        {
+          id: "green-starter",
+          name: "Green Starter",
+          image: "user-image/bronze.png",
+          description: "Earn 2,500 Tomatoes points",
+          pointsRequired: 2500,
+        },
+        {
+          id: "eco-warrior",
+          name: "Eco Warrior",
+          image: "user-image/gold.png",
+          description: "Earn 5,000 Tomatoes points",
+          pointsRequired: 5000,
+        },
+        {
+          id: "recycling-leader",
+          name: "Recycling Leader",
+          image: "user-image/plat.png",
+          description: "Earn 10,000 Tomatoes points",
+          pointsRequired: 10000,
+        },
+        {
+          id: "sustainability-hero",
+          name: "Sustainability Hero",
+          image: "user-image/diamond.png",
+          description: "Earn 15,000 Tomatoes points",
+          pointsRequired: 15000,
+        },
+        {
+          id: "ultimate-recycler",
+          name: "Ultimate Recycler",
+          image: "user-image/immortal.png",
+          description: "Earn 25,000 Tomatoes points",
+          pointsRequired: 25000,
+        },
+      ];
+
+      window.toggleSlider = function (isAchievementsSelected) {
+        const sliderBg = document.querySelector(".slider-background");
+        const options = document.querySelectorAll(".slider-option");
+        const achievementsContainer = document.getElementById(
+          "achievements-container"
+        );
+        const leaderboardContainer = document.getElementById(
+          "leaderboard-container"
+        );
+
+        if (isAchievementsSelected) {
+          sliderBg.style.left = "0px";
+          options[0].classList.add("active");
+          options[1].classList.remove("active");
+          achievementsContainer.style.display = "block";
+          leaderboardContainer.style.display = "none";
+        } else {
+          sliderBg.style.left = "50%";
+          options[0].classList.remove("active");
+          options[1].classList.add("active");
+          achievementsContainer.style.display = "none";
+          leaderboardContainer.style.display = "block";
+
+          loadLeaderboard();
+        }
+      };
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const backButton = document.getElementById("back-btn");
+
+        if (backButton) {
+          backButton.addEventListener("click", function () {
+            window.location.href = "main_page.html";
+          });
+        }
+
+        onAuthStateChanged(auth, (user) => {
+          if (user) {
+            currentUserId = user.uid;
+            loadUserProfile(user.uid);
+            loadBadges(user.uid);
+          } else {
+            window.location.href = "login.html";
+          }
+        });
+      });
+
+      async function loadUserProfile(userId) {
+        try {
+          const userDocRef = doc(db, "users", userId);
+          const userDoc = await getDoc(userDocRef);
+
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+
+            const userPoints = userData.points || 0;
+            document.getElementById("user-points").textContent =
+              userPoints.toLocaleString() + " Tomatoes";
+          }
+        } catch (error) {
+          console.error("Error loading user profile:", error);
+        }
+      }
+
+      async function loadBadges(userId) {
+        try {
+          const badgesContainer = document.getElementById("badges-container");
+          badgesContainer.innerHTML = "";
+
+          const userDocRef = doc(db, "users", userId);
+          const userDoc = await getDoc(userDocRef);
+
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            const userPoints = userData.points || 0;
+
+            BADGES.forEach((badge) => {
+              const isUnlocked = userPoints >= badge.pointsRequired;
+
+              const badgeElement = document.createElement("div");
+              badgeElement.className = `badge-item ${
+                isUnlocked ? "" : "badge-locked"
+              }`;
+              badgeElement.id = badge.id;
+
+              const infoButton = document.createElement("div");
+              infoButton.className = "info-button";
+              infoButton.innerHTML = "i";
+              infoButton.onclick = (e) => {
+                e.stopPropagation();
+                showBadgeInfo(badge);
+              };
+
+              const badgeImage = document.createElement("img");
+              badgeImage.className = "badge-icon";
+              badgeImage.src = badge.image;
+              badgeImage.alt = badge.name;
+
+              const badgeName = document.createElement("div");
+              badgeName.className = "badge-name";
+              badgeName.textContent = badge.name;
+
+              badgeElement.appendChild(infoButton);
+              badgeElement.appendChild(badgeImage);
+              badgeElement.appendChild(badgeName);
+              badgesContainer.appendChild(badgeElement);
+            });
+          }
+        } catch (error) {
+          console.error("Error loading badges:", error);
+        }
+      }
+
+      function showBadgeInfo(badge) {
+        const popupOverlay = document.getElementById("popup-overlay");
+        const popupTitle = document.getElementById("popup-title");
+        const popupDescription = document.getElementById("popup-description");
+        const popupPoints = document.getElementById("popup-points");
+
+        popupTitle.textContent = badge.name;
+        popupDescription.textContent = badge.description;
+        popupPoints.textContent = `${badge.pointsRequired.toLocaleString()} Tomatoes Required`;
+
+        popupOverlay.classList.add("show-popup");
+      }
+
+      function closePopup() {
+        const popupOverlay = document.getElementById("popup-overlay");
+        popupOverlay.classList.remove("show-popup");
+      }
+
+      document
+        .getElementById("popup-close")
+        .addEventListener("click", closePopup);
+      document
+        .getElementById("popup-overlay")
+        .addEventListener("click", function (e) {
+          if (e.target === this) {
+            closePopup();
+          }
+        });
+
+      async function loadLeaderboard() {
+        try {
+          const leaderboardList = document.getElementById("leaderboard-list");
+          leaderboardList.innerHTML = "";
+
+          if (!currentUserId) {
+            console.error("User is not logged in.");
+            document.getElementById("user-rank").innerHTML = `--<sup>th</sup>`;
+            return;
+          }
+
+          const currentUserRef = doc(db, "users", currentUserId);
+          const currentUserSnap = await getDoc(currentUserRef);
+
+          if (!currentUserSnap.exists()) {
+            console.error("Current user not found in Firestore.");
+            document.getElementById("user-rank").innerHTML = `--<sup>th</sup>`;
+            return;
+          }
+
+          const currentUserPoints = currentUserSnap.data().points || 0;
+          console.log(`Logged-in user points: ${currentUserPoints}`);
+
+          const usersRef = collection(db, "users");
+          const querySnapshot = await getDocs(usersRef);
+
+          let userData = [];
+          let currentUserRank = 1;
+
+          querySnapshot.forEach((doc) => {
+            const user = doc.data();
+            if (
+              user.role === "Admin" ||
+              user.role === "Manager" ||
+              user.role === "Staff" ||
+              user.role === "Collector"
+            ) {
+              return;
+            }
+
+            userData.push({ id: doc.id, ...user });
+
+            if (user.points > currentUserPoints) {
+              currentUserRank++;
+            }
+          });
+
+          document.getElementById(
+            "user-rank"
+          ).innerHTML = `${currentUserRank}<sup>${getRankSuffix(
+            currentUserRank
+          )}</sup>`;
+
+          userData.sort((a, b) => (b.points || 0) - (a.points || 0));
+
+          userData.slice(0, 10).forEach((user, index) => {
+            const rank = index + 1;
+            const leaderboardItem = document.createElement("div");
+            leaderboardItem.className = "leaderboard-item";
+
+            leaderboardItem.innerHTML = `
+        <div class="leaderboard-rank" style="${
+          rank <= 3 ? "background-color: #6aaf5c;" : ""
+        }">${rank}</div>
+        <img class="leaderboard-profile" src="${
+          user.profile || "user-image/profile.png"
+        }" alt="${user.fullname || "User"}">
+        <div class="leaderboard-user-info">
+          <div class="leaderboard-name">${
+            user.fullname || "Anonymous User"
+          }</div>
+          <div class="leaderboard-points">${(
+            user.points || 0
+          ).toLocaleString()} Tomatoes collected</div>
+        </div>
+      `;
+
+            leaderboardList.appendChild(leaderboardItem);
+          });
+        } catch (error) {
+          console.error("Error loading leaderboard:", error);
+          document.getElementById("user-rank").innerHTML = `--<sup>th</sup>`;
+        }
+      }
+
+      // Function to determine the ordinal suffix (st, nd, rd, th)
+      function getRankSuffix(rank) {
+        if (!rank || isNaN(rank)) return "th";
+        if (rank % 100 >= 11 && rank % 100 <= 13) return "th";
+        switch (rank % 10) {
+          case 1:
+            return "st";
+          case 2:
+            return "nd";
+          case 3:
+            return "rd";
+          default:
+            return "th";
+        }
+      }
+    </script>
+  </body>
+</html>

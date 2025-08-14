@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Recycling Analytics</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background-color: #f9f9f9;
+        color: #333;
+      }
+
+      .container {
+        max-width: 100%;
+        margin: 0 auto;
+        min-height: 100vh;
+        position: relative;
+        overflow: hidden;
+        background-image: url(user-image/back.png);
+      }
+
+      header {
+        padding: 40px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .title {
+        color: #2a7d2a;
+        font-weight: 600;
+        font-size: 23px;
+        color: #676767;
+      }
+
+      .more-menu {
+        position: relative;
+        cursor: pointer;
+        width: 40px;
+        height: 40px;
+        background-color: #f1f1f1;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: all 0.3s ease;
+        z-index: 100;
+      }
+
+      .three-dots {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 5px;
+        height: 20px;
+      }
+
+      .dot {
+        width: 5px;
+        height: 5px;
+        background-color: #666;
+        border-radius: 50%;
+      }
+
+      .slide-menu {
+        position: absolute;
+        top: 50px;
+        right: 0;
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        width: 150px;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s;
+        z-index: 100;
+      }
+
+      .slide-menu.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .menu-item {
+        display: flex;
+        align-items: center;
+        padding: 12px 15px;
+        transition: background-color 0.2s;
+      }
+
+      .menu-item:hover {
+        background-color: rgba(46, 125, 50, 0.1);
+      }
+
+      .menu-item i {
+        margin-right: 10px;
+        font-size: 18px;
+      }
+
+      .menu-item span {
+        font-size: 14px;
+      }
+
+      .menu-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.3);
+        z-index: 90;
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      .menu-overlay.active {
+        visibility: visible;
+        opacity: 1;
+        width: 100%;
+        height: 100%;
+      }
+
+      .tab-slider-container {
+        padding: 0 40px;
+        padding-bottom: 20px;
+        position: relative;
+      }
+
+      .tab-slider {
+        background-color: #e0e0e0;
+        border-radius: 20px;
+        display: flex;
+        position: relative;
+        height: 42px;
+        width:196px;
+        left: 0;
+      }
+
+      .slider-option {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 2;
+        font-size: 14px;
+        cursor: pointer;
+        transition: color 0.3s;
+        border-radius: 16px;
+        left: 0;
+      }
+
+      .slider-option.active {
+        color: white;
+        left: 0;
+      }
+
+      .material-icons{
+        color: #2a7d2a;
+      }
+
+      .slider-background {
+        position: absolute;
+        left: 0px;
+        width: 50%;
+        height: 42px;
+        background-color: #6aaf5c;
+        border-radius: 20px;
+        transition: left 0.3s ease;
+        z-index: 1;
+      }
+
+      .content-slider-container {
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+      }
+
+      .content-slider {
+        display: flex;
+        transition: transform 0.5s ease;
+        width: 200%;
+      }
+
+      .content-slide {
+        width: 50%; 
+        flex-shrink: 0;
+      }
+
+      .stats-container {
+        text-align: center;
+        padding: 20px;
+        position: relative;
+      }
+
+      .curve-bg {
+        position: absolute;
+        top: 100px;
+        left: 0;
+        right: 0;
+        height: 100px;
+        background-color: #c5e8a5;
+        border-radius: 50% 50% 0 0;
+        z-index: -1;
+      }
+
+      .main-stat {
+        font-size: 60px;
+        font-weight: bold;
+        color: #2a5c2a;
+        margin-bottom: 5px;
+      }
+
+      .stat-description {
+        font-size: 14px;
+        color: #666;
+        max-width: 200px;
+        margin: 0 auto;
+        line-height: 1.3;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        padding: 20px 40px 40px 40px;
+      }
+
+      .stat-card {
+        background-color: rgba(255, 255, 255, 0.4);
+        border-radius: 15px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: left;
+        justify-content: left;
+        position: relative;
+        text-align: left;
+      }
+
+      .carbon-container {
+        text-align: center;
+        padding: 20px;
+      }
+
+      .categories-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+        padding: 20px 15px;
+        margin-top: 10px;
+        max-height: 350px;
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+      
+      .category-box {
+        background-color: rgba(255, 255, 255, 0.8);
+        border-radius: 12px;
+        padding: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+      
+      .category-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      
+      .category-icon {
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+      }
+      
+      .category-name {
+        font-size: 14px;
+        font-weight: 500;
+        color: #444;
+      }
+      
+      .category-value {
+        font-size: 16px;
+        font-weight: 600;
+        color: #2a7d2a;
+      }
+
+      .progress-circle-container {
+        position: relative;
+        width: 60px;
+        height: 60px;
+        margin-bottom: 15px;
+      }
+
+      svg.progress-circle {
+        transform: rotate(-90deg);
+        width: 100%;
+        height: 100%;
+      }
+
+      .progress-background {
+        fill: none;
+        stroke: rgba(200, 200, 200, 0.4);
+        stroke-width: 6;
+      }
+
+      .progress-value {
+        fill: none;
+        stroke: #4caf50;
+        stroke-width: 6;
+        stroke-linecap: round;
+        transition: stroke-dashoffset 0.3s;
+      }
+
+      .icon-circle {
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      .icon {
+        width: 20px;
+        height: 20px;
+        color: #4caf50;
+      }
+
+      .stat-value-container {
+        display: flex;
+        align-items: baseline;
+        justify-content: left;
+      }
+
+      .stat-value {
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+      }
+
+      .stat-total {
+        font-size: 12px;
+        color: #888;
+        margin-left: 3px;
+      }
+
+      .stat-label {
+        font-size: 12px;
+        color: #666;
+        margin-top: 5px;
+        text-align: left;
+      }
+
+      .nav-controls {
+        position: absolute;
+        top: 55%;
+        transform: translateY(-50%);
+        width: 100%;
+        z-index: 10;
+        pointer-events: none;
+        }
+
+        .arrow {
+        width: 40px;
+        height: 40px;
+        background-color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        pointer-events: auto;
+        position: absolute;
+        font-size: 20px;
+        padding-bottom: 6px;
+        opacity: 50%;
+        }
+
+        #prevButton {
+        left: 5px;
+        }
+
+        #nextButton {
+        right: 5px;
+        }
+
+      .bottom-nav {
+        position: fixed; 
+        bottom: 40px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: white;
+        border-radius: 30px;
+        padding: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        width: 90%;
+        z-index: 20;
+    }
+
+
+      .nav-items-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        padding: 0 10px;
+      }
+
+      .nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border:none;
+        color: #888;
+        transition: color 0.3s ease;
+        opacity: 0.6;
+        width: 50px;
+        text-align: center;
+        padding: 12px;
+        border-radius: 30px;
+
+      }
+
+      .nav-item:hover,
+      .nav-item.active {
+        color: #2e7d32;
+        opacity: 1;
+        background-color: rgba(46, 125, 50, 0.1);
+      }
+
+      .nav-item svg {
+        width: 24px;
+        height: 24px;
+        stroke-width: 1.5;
+      }
+
+      .nav-item span {
+        display: none;
+      }
+
+      .add-button {
+        background-color: #2e7d32;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border:none;
+        color: white;
+        box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
+        position: relative;
+        transition: transform 0.2s ease;
+      }
+
+      .add-button:hover {
+        transform: scale(1.05);
+      }
+
+      .stats-container{
+        background-color: white;
+        padding-bottom: 40px;
+        border-radius: 0px 0px 100px 100px ;
+      }
+
+      .nav-controls, header, .tab-slider-container{
+        background-color: white;
+      }
+
+      .carbon-container{
+        background-color: white;
+        padding-bottom: 40px;
+        border-radius: 0px 0px 100px 100px ;
+      }
+
+    </style>
+  </head>
+  <body>
+    <div class="container">
+        <div class="top">
+      <header>
+        <div class="title">Analytics</div>
+        <div class="profile">
+          <div class="more-menu" id="more-menu">
+            <div class="three-dots">
+              <div class="dot"></div>
+              <div class="dot"></div>
+              <div class="dot"></div>
+            </div>
+            <div class="slide-menu" id="slide-menu">
+              <div class="menu-item" id="analytics-btn">
+                <i class="material-icons">analytics</i>
+                <span>Analytics</span>
+              </div>
+              <div class="menu-item" id="chatbot-btn">
+                <i class="material-icons">chat</i>
+                <span>Chatbot</span>
+              </div>
+              <div class="menu-item" id="reward-btn">
+                <i class="material-icons">emoji_events</i>
+                <span>Rewards</span>
+              </div>
+              <div class="menu-item" id="notify-btn">
+                <i class="material-icons">notifications</i>
+                <span>Notifications</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      <div class="menu-overlay" id="menu-overlay"></div>
+
+      </header>
+
+      <div class="tab-slider-container">
+        <div class="tab-slider">
+          <div class="slider-background"></div>
+          <div class="slider-option active" onclick="toggleSlider(true)">
+            Month
+          </div>
+          <div class="slider-option" onclick="toggleSlider(false)">Year</div>
+        </div>
+      </div>
+
+      <div class="nav-controls">
+        <div class="arrow" id="prevButton">&#8249;</div>
+        <div class="arrow" id="nextButton">&#8250;</div>
+      </div>
+
+      <div class="content-slider-container">
+        <div class="content-slider" id="contentSlider">
+          <div class="content-slide">
+            <div class="stats-container">
+              <div class="main-stat">0</div>
+              <div class="stat-description">items recycled this month</div>
+            </div>
+            
+
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="progress-circle-container">
+                  <svg class="progress-circle">
+                    <circle
+                      class="progress-background"
+                      cx="30"
+                      cy="30"
+                      r="27"
+                    ></circle>
+                    <circle
+                      class="progress-value"
+                      cx="30"
+                      cy="30"
+                      r="27"
+                      style="stroke-dasharray: 169.65; stroke-dashoffset: 169.65"
+                    ></circle>
+                  </svg>
+                  <div class="icon-circle">
+                    <i class="material-icons">pending_actions</i>
+                  </div>
+                </div>
+                <div class="stat-value-container">
+                  <div class="stat-value">0</div>
+                  <div class="stat-total">/0</div>
+                </div>
+                <div class="stat-label">waiting for pickup</div>
+              </div>
+
+              <div class="stat-card">
+                <div class="progress-circle-container">
+                  <svg class="progress-circle">
+                    <circle
+                      class="progress-background"
+                      cx="30"
+                      cy="30"
+                      r="27"
+                    ></circle>
+                    <circle
+                      class="progress-value"
+                      cx="30"
+                      cy="30"
+                      r="27"
+                      style="stroke-dasharray: 169.65; stroke-dashoffset: 169.65"
+                    ></circle>
+                  </svg>
+                  <div class="icon-circle">
+                    <i class="material-icons">local_shipping</i>
+                      <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                      <path d="M16 2v4M8 2v4M2 10h20"></path>
+                    </svg>
+                  </div>
+                </div>
+                <div class="stat-value-container">
+                  <div class="stat-value">0</div>
+                  <div class="stat-total">/0</div>
+                </div>
+                <div class="stat-label">on delivery</div>
+              </div>
+
+              <div class="stat-card">
+                <div class="progress-circle-container">
+                  <svg class="progress-circle">
+                    <circle
+                      class="progress-background"
+                      cx="30"
+                      cy="30"
+                      r="27"
+                    ></circle>
+                    <circle
+                      class="progress-value"
+                      cx="30"
+                      cy="30"
+                      r="27"
+                      style="stroke-dasharray: 169.65; stroke-dashoffset: 169.65"
+                    ></circle>
+                  </svg>
+                  <div class="icon-circle">
+                    <i class="material-icons">where_to_vote</i>
+                  </div>
+                </div>
+                <div class="stat-value-container">
+                  <div class="stat-value">0</div>
+                  <div class="stat-total">/0</div>
+                </div>
+                <div class="stat-label">delivered</div>
+              </div>
+
+              <div class="stat-card">
+                <div class="progress-circle-container">
+                  <svg class="progress-circle">
+                    <circle
+                      class="progress-background"
+                      cx="30"
+                      cy="30"
+                      r="27"
+                    ></circle>
+                    <circle
+                      class="progress-value"
+                      cx="30"
+                      cy="30"
+                      r="27"
+                      style="stroke-dasharray: 169.65; stroke-dashoffset: 169.65"
+                    ></circle>
+                  </svg>
+                  <div class="icon-circle">
+                    <i class="material-icons">recycling</i>
+                  </div>
+                </div>
+                <div class="stat-value-container">
+                  <div class="stat-value">0</div>
+                  <div class="stat-total">/0</div>
+                </div>
+                <div class="stat-label">processed</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="content-slide">
+            <div class="carbon-container">
+              <div class="main-stat">25</div>
+              <div class="stat-description">
+                Carbon Footprint Reduced <br>(in kg CO₂)
+              </div>
+            </div>
+
+            <div class="categories-grid">
+              <div class="category-box">
+                <div class="category-left">
+                  <div class="category-icon" style="background-color: rgba(129, 199, 132, 0.2);">
+                    <i class="material-icons" style="color: #81c784;">smartphone</i>
+                  </div>
+                  <div class="category-name">Mobile Phones</div>
+                </div>
+                <div class="category-value">0 kg</div>
+              </div>
+              
+                <div class="category-box">
+                  <div class="category-left">
+                    <div class="category-icon" style="background-color: rgba(76, 175, 80, 0.2);">
+                      <i class="material-icons" style="color: #4caf50;">computer</i>
+                    </div>
+                    <div class="category-name">Computers</div>
+                  </div>
+                  <div class="category-value">0 kg</div>
+                </div>
+                
+                <div class="category-box">
+                  <div class="category-left">
+                    <div class="category-icon" style="background-color: rgba(46, 125, 50, 0.2);">
+                      <i class="material-icons" style="color: #2e7d32;">tv</i>
+                    </div>
+                    <div class="category-name">Televisions/Monitors</div>
+                  </div>
+                  <div class="category-value">0 kg</div>
+                </div>
+                
+                <div class="category-box">
+                  <div class="category-left">
+                    <div class="category-icon" style="background-color: rgba(21, 101, 192, 0.2);">
+                      <i class="material-icons" style="color: #1565c0;">print</i>
+                    </div>
+                    <div class="category-name">Printers</div>
+                  </div>
+                  <div class="category-value">0 kg</div>
+                </div>
+                
+                <div class="category-box">
+                  <div class="category-left">
+                    <div class="category-icon" style="background-color: rgba(48, 63, 159, 0.2);">
+                      <i class="material-icons" style="color: #303f9f;">kitchen</i>
+                    </div>
+                    <div class="category-name">Appliances</div>
+                  </div>
+                  <div class="category-value">0 kg</div>
+                </div>
+                
+                <div class="category-box">
+                  <div class="category-left">
+                    <div class="category-icon" style="background-color: rgba(26, 35, 126, 0.2);">
+                      <i class="material-icons" style="color: #1a237e;">battery_full</i>
+                    </div>
+                    <div class="category-name">Batteries</div>
+                  </div>
+                  <div class="category-value">0 kg</div>
+                </div>
+                
+                <div class="category-box">
+                  <div class="category-left">
+                    <div class="category-icon" style="background-color: rgba(220, 237, 200, 0.2);">
+                      <i class="material-icons" style="color: #dcedc8;">devices_other</i>
+                    </div>
+                    <div class="category-name">Others</div>
+                  </div>
+                  <div class="category-value">0 kg</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      <div class="bottom-nav">
+        <div class="nav-items-container">
+          <button class="nav-item active" id="home-btn">
+            <img src="user-image/home.png" alt="Home" width="24" height="24" />
+            <span>Home</span>
+          </button>
+          <button class="nav-item" id="chat-btn">
+            <img src="user-image/chat.png" alt="Chat" width="24" height="24" />
+            <span>Chat</span>
+          </button>
+          <button class="add-button">
+            <img src="user-image/plus.png" alt="Add" width="24" height="24" />
+          </button>
+          <button class="nav-item" id="tracking-btn">
+            <img
+              src="user-image/tracking.png"
+              alt="List"
+              width="24"
+              height="24"
+            />
+            <span>List</span>
+          </button>
+          <button class="nav-item" id="user-btn">
+            <img
+              src="user-image/profile.png"
+              alt="Profile"
+              width="24"
+              height="24"
+            />
+            <span>Profile</span>
+          </button>
+      </div>
+
+    <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-auth-compat.js"></script>
+
+      <script>
+         document.addEventListener('DOMContentLoaded', function() {
+          const addButton = document.querySelector('.add-button');
+          const moreMenu = document.getElementById('more-menu');
+          const slideMenu = document.getElementById('slide-menu');
+          const menuOverlay = document.getElementById('menu-overlay');
+          const analyticsBtn = document.getElementById('analytics-btn');
+          const chatbotBtn = document.getElementById('chatbot-btn');
+          const rewardBtn = document.getElementById('reward-btn');
+          const notifyBtn = document.getElementById('notify-btn');
+      
+          moreMenu.addEventListener('click', function(e) {
+            e.stopPropagation();
+            slideMenu.classList.toggle('active');
+            menuOverlay.classList.toggle('active');
+          });
+          
+          menuOverlay.addEventListener('click', function() {
+            slideMenu.classList.remove('active');
+            menuOverlay.classList.remove('active');
+          });
+          
+          analyticsBtn.addEventListener('click', function() {
+            window.location.href = 'analytic.html';
+          });
+          
+          chatbotBtn.addEventListener('click', function() {
+            window.location.href = 'chatbot.html';
+          });
+          
+          rewardBtn.addEventListener('click', function() {
+            window.location.href = 'reward.html';
+          });
+
+          notifyBtn.addEventListener('click', function() {
+            window.location.href = 'notify.html';
+          });
+      
+          addButton.addEventListener('touchstart', function() {
+            window.location.href = 'bucket.html';
+          });
+          document.getElementById("chat-btn").addEventListener("touchstart", function() {
+            window.location.href = "chat_list.html"; 
+          });
+
+          document.getElementById("logout-btn").addEventListener("touchstart", function() {
+
+          localStorage.removeItem("userSession");
+    
+
+          auth.signOut().then(() => {
+              window.location.href = "index.html";
+          }).catch((error) => {
+              console.error("Error during logout:", error);
+          });
+        });
+      });
+        
+        const firebaseConfig = {
+          apiKey: "AIzaSyDgoc4Zx064nL1iydJbccI692HDpu8gLLE",
+          authDomain: "capstone-project-312dc.firebaseapp.com",
+          projectId: "capstone-project-312dc",
+          storageBucket: "capstone-project-312dc.appspot.com",
+          messagingSenderId: "82712440613",
+          appId: "1:82712440613:web:124a86e48a3b9c3e6bf4cc",
+          measurementId: "G-YFF9RVYJ9C",
+        };
+      
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+      
+        const getCurrentUserId = () => {
+          return firebase.auth().currentUser ? firebase.auth().currentUser.uid : null;
+        };
+      
+        const getFirstDayOfMonth = () => {
+          const now = new Date();
+          return new Date(now.getFullYear(), now.getMonth(), 1);
+        };
+      
+        const updateRecyclingAnalytics = async () => {
+          const userId = getCurrentUserId();
+          
+          if (!userId) {
+            console.error("No user is signed in");
+            return;
+          }
+          
+          const firstDayOfMonth = getFirstDayOfMonth();
+          
+          try {
+            const scheduledQuery = db.collection('inventory')
+              .where('uid', '==', userId)
+              .where('status', '==', 'Scheduled')
+              .where('createdAt', '>=', firstDayOfMonth);
+            
+            const onDeliveryQuery = db.collection('inventory')
+              .where('uid', '==', userId)
+              .where('status', '==', 'On Delivery')
+              .where('createdAt', '>=', firstDayOfMonth);
+            
+            const deliveredQuery = db.collection('inventory')
+              .where('uid', '==', userId)
+              .where('status', '==', 'Delivered')
+              .where('createdAt', '>=', firstDayOfMonth);
+            
+            const processedQuery = db.collection('inventory')
+              .where('uid', '==', userId)
+              .where('status', '==', 'Processed')
+              .where('createdAt', '>=', firstDayOfMonth);
+            
+            const [scheduledSnapshot, onDeliverySnapshot, deliveredSnapshot, processedSnapshot] = await Promise.all([
+              scheduledQuery.get(),
+              onDeliveryQuery.get(),
+              deliveredQuery.get(),
+              processedQuery.get()
+            ]);
+            
+            const waitingForPickupCount = scheduledSnapshot.size;
+            const onDeliveryCount = onDeliverySnapshot.size;
+            const deliveredCount = deliveredSnapshot.size;
+            const processedCount = processedSnapshot.size;
+            
+            const totalRecycledItems = waitingForPickupCount + onDeliveryCount + deliveredCount + processedCount;
+            
+            updateUI(totalRecycledItems, waitingForPickupCount, onDeliveryCount, deliveredCount, processedCount);
+            
+            updateProgressCircles(waitingForPickupCount, onDeliveryCount, deliveredCount, processedCount, totalRecycledItems);
+            
+            console.log("Data updated successfully:", {
+              waiting: waitingForPickupCount,
+              onDelivery: onDeliveryCount,
+              delivered: deliveredCount,
+              processed: processedCount,
+              total: totalRecycledItems
+            });
+            
+          } catch (error) {
+            console.error("Error fetching recycling analytics:", error);
+          }
+        };
+      
+        const updateUI = (totalItems, waitingCount, onDeliveryCount, deliveredCount, processedCount) => {
+          const mainStatElement = document.querySelector('.main-stat');
+          if (mainStatElement) {
+            mainStatElement.textContent = totalItems;
+          }
+          
+          const statCards = document.querySelectorAll('.stat-card');
+          
+          if (statCards[0]) {
+            statCards[0].querySelector('.stat-value').textContent = waitingCount;
+            statCards[0].querySelector('.stat-total').textContent = `/${totalItems}`;
+          }
+          
+          if (statCards[1]) {
+            statCards[1].querySelector('.stat-value').textContent = onDeliveryCount;
+            statCards[1].querySelector('.stat-total').textContent = `/${totalItems}`;
+          }
+
+          if (statCards[2]) {
+            statCards[2].querySelector('.stat-value').textContent = deliveredCount;
+            statCards[2].querySelector('.stat-total').textContent = `/${totalItems}`;
+          }
+          
+          if (statCards[3]) {
+            statCards[3].querySelector('.stat-value').textContent = processedCount;
+            statCards[3].querySelector('.stat-total').textContent = `/${totalItems}`;
+          }
+        };
+      
+
+        const updateProgressCircles = (waitingCount, onDeliveryCount, deliveredCount, processedCount, totalItems) => {
+          const circles = document.querySelectorAll('.progress-value');
+          const circumference = 2 * Math.PI * 27; 
+          
+          if (totalItems > 0 && circles.length >= 4) {
+            
+            const waitingPercentage = waitingCount / totalItems;
+            const onDeliveryPercentage = onDeliveryCount / totalItems;
+            const deliveredPercentage = deliveredCount / totalItems;
+            const processedPercentage = processedCount / totalItems;
+            
+            updateCircle(circles[0], waitingPercentage, circumference);
+            updateCircle(circles[1], onDeliveryPercentage, circumference);
+            updateCircle(circles[2], deliveredPercentage, circumference);
+            updateCircle(circles[3], processedPercentage, circumference);
+          }
+        };
+      
+        const updateCircle = (circleElement, percentage, circumference) => {
+          const dashOffset = circumference * (1 - percentage);
+          circleElement.style.strokeDasharray = circumference;
+          circleElement.style.strokeDashoffset = dashOffset;
+        };
+      
+        function initProgressCircles() {
+          const cards = [
+            { value: 0, total: 0 },
+            { value: 0, total: 0 },
+            { value: 0, total: 0 },
+            { value: 0, total: 0 },
+          ];
+      
+          const circles = document.querySelectorAll(".progress-value");
+          const circumference = 2 * Math.PI * 27; 
+      
+          cards.forEach((card, index) => {
+            const percentage = card.value / card.total;
+            const dashOffset = circumference * (1 - percentage);
+            circles[index].style.strokeDasharray = circumference;
+            circles[index].style.strokeDashoffset = dashOffset;
+          });
+        }
+
+        let currentSlide = 0;
+        const totalSlides = 2;
+        
+        function showNextSlide() {
+          if (currentSlide < totalSlides - 1) {
+            currentSlide++;
+            updateSlider();
+          }
+        }
+      
+        function showPrevSlide() {
+          if (currentSlide > 0) {
+            currentSlide--;
+            updateSlider();
+          }
+        }
+      
+        function updateSlider() {
+          const slider = document.getElementById("contentSlider");
+          const translateValue = -currentSlide * 50 + "%";
+          slider.style.transform = "translateX(" + translateValue + ")";
+        }
+      
+        function toggleSlider(isMonthSelected) {
+          const sliderBg = document.querySelector(".slider-background");
+          const options = document.querySelectorAll(".slider-option");
+      
+          if (isMonthSelected) {
+            sliderBg.style.left = "0px";
+            options[0].classList.add("active");
+            options[1].classList.remove("active");
+          } else {
+            sliderBg.style.left = "50%";
+            options[0].classList.remove("active");
+            options[1].classList.add("active");
+          }
+        }
+
+        const carbonReductionValues = {
+          'Mobile Phones': 50,
+          'Computers': 300,
+          'Televisions': 500,
+          'Printer': 250,
+          'Appliances': 350,
+          'Batteries': 10,
+          'Other': 20
+        };
+
+        async function calculateCarbonFootprint() {
+          const userId = getCurrentUserId();
+          
+          if (!userId) {
+            console.error("No user is signed in");
+            return 0;
+          }
+          
+          try {
+
+            const inventorySnapshot = await db.collection('inventory')
+              .where('uid', '==', userId)
+              .get();
+            
+            const categoryCount = {};
+            inventorySnapshot.forEach(doc => {
+              const data = doc.data();
+              const category = data.category || 'Other';
+              
+              if (!categoryCount[category]) {
+                categoryCount[category] = 0;
+              }
+              
+              categoryCount[category]++;
+            });
+            
+            const carbonByCategory = {};
+            let totalCarbon = 0;
+            
+            for (const category in categoryCount) {
+              const count = categoryCount[category];
+              const carbonValue = carbonReductionValues[category] || 0;
+              const carbon = count * carbonValue;
+              
+              carbonByCategory[category] = {
+                count,
+                carbon
+              };
+              
+              totalCarbon += carbon;
+            }
+            
+            updateCarbonUI(totalCarbon, carbonByCategory);
+            
+            return {
+              total: totalCarbon,
+              byCategory: carbonByCategory
+            };
+          } catch (error) {
+            console.error("Error calculating carbon footprint:", error);
+            return 0;
+          }
+        }
+      
+        function updateCarbonUI(totalCarbon, carbonByCategory) {
+          const carbonStatElement = document.querySelector('.carbon-container .main-stat');
+          if (carbonStatElement) {
+            carbonStatElement.textContent = Math.round(totalCarbon);
+          }
+          
+          updateCategoryBoxes(carbonByCategory);
+        }
+
+        function updateCategoryBoxes(carbonByCategory) {
+          // Define all categories we want to display, including ones with zero values
+          const allCategories = {
+            'Mobile Phones': { icon: 'smartphone', color: '#81c784' },
+            'Computers': { icon: 'computer', color: '#4caf50' },
+            'Televisions': { icon: 'tv', color: '#2e7d32' },
+            'Printer': { icon: 'print', color: '#1565c0' },
+            'Appliances': { icon: 'kitchen', color: '#303f9f' },
+            'Batteries': { icon: 'battery_full', color: '#1a237e' },
+            'Other': { icon: 'devices_other', color: '#dcedc8' }
+          };
+          
+          // Get all category boxes
+          const categoryBoxes = document.querySelectorAll('.category-box');
+          if (!categoryBoxes.length) return;
+          
+          let index = 0;
+          // Update each category box
+          for (const [category, info] of Object.entries(allCategories)) {
+            if (index >= categoryBoxes.length) break;
+            
+            const box = categoryBoxes[index];
+            const valueElement = box.querySelector('.category-value');
+            
+            // Get carbon value for this category, defaulting to 0
+            const carbonValue = carbonByCategory[category] ? 
+              Math.round(carbonByCategory[category].carbon) : 0;
+            
+            // Update the value displayed
+            valueElement.textContent = `${carbonValue} kg`;
+            
+            index++;
+          }
+        }
+
+        // When replacing the chart container with the categories grid, also modify the calculateCarbonFootprint function
+        // to handle the "Other" category properly
+        async function calculateCarbonFootprint() {
+          const userId = getCurrentUserId();
+          
+          if (!userId) {
+            console.error("No user is signed in");
+            return 0;
+          }
+          
+          try {
+            const inventorySnapshot = await db.collection('inventory')
+              .where('uid', '==', userId)
+              .get();
+            
+            const categoryCount = {};
+            inventorySnapshot.forEach(doc => {
+              const data = doc.data();
+              // If category is not one of our defined ones, put it in "Other"
+              const category = data.category && 
+                              ['Mobile Phones', 'Computers', 'Televisions', 
+                              'Printer', 'Appliances', 'Batteries'].includes(data.category) 
+                              ? data.category : 'Other';
+              
+              if (!categoryCount[category]) {
+                categoryCount[category] = 0;
+              }
+              
+              categoryCount[category]++;
+            });
+            
+            const carbonByCategory = {};
+            let totalCarbon = 0;
+            
+            for (const category in categoryCount) {
+              const count = categoryCount[category];
+              // Use a default value of 20 for "Other" category
+              const carbonValue = category === 'Other' ? 20 : (carbonReductionValues[category] || 0);
+              const carbon = count * carbonValue;
+              
+              carbonByCategory[category] = {
+                count,
+                carbon
+              };
+              
+              totalCarbon += carbon;
+            }
+            
+            updateCarbonUI(totalCarbon, carbonByCategory);
+            
+            return {
+              total: totalCarbon,
+              byCategory: carbonByCategory
+            };
+          } catch (error) {
+            console.error("Error calculating carbon footprint:", error);
+            return 0;
+          }
+        }
+
+        window.onload = function() {
+
+          initProgressCircles();
+          
+          document.getElementById("nextButton").addEventListener("click", showNextSlide);
+          document.getElementById("prevButton").addEventListener("click", showPrevSlide);
+          
+          const user = firebase.auth().currentUser;
+          if (user) {
+            updateRecyclingAnalytics();
+            calculateCarbonFootprint();
+          }
+        };
+      
+        firebase.auth().onAuthStateChanged((user) => {
+          if (user) {
+            console.log("User signed in:", user.uid);
+            updateRecyclingAnalytics();
+            calculateCarbonFootprint();
+          } else {
+            console.log("User is signed out");
+          }
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+              const addButton = document.querySelector(".add-button");
+              const notificationIcon = document.querySelector(".notification-icon");
+              const homeBtn = document.getElementById("home-btn");
+              const chatBtn = document.getElementById("chat-btn");
+              const trackingBtn = document.getElementById("tracking-btn");
+              const userBtn = document.getElementById("user-btn"); 
+
+              if (notificationIcon) {
+                notificationIcon.addEventListener("click", function () {
+                  window.location.href = "chatbot.html";
+                });
+              }
+
+              if (homeBtn) {
+                homeBtn.addEventListener("touchstart", function () {
+                  window.location.href = "main_page.html";
+                });
+              }
+
+              if (chatBtn) {
+                chatBtn.addEventListener("touchstart", function () {
+                  window.location.href = "chat_list.html";
+                });
+              }
+
+              if (addButton) {
+                addButton.addEventListener("touchstart", function () {
+                  window.location.href = "bucket.html";
+                });
+              }
+
+              if (trackingBtn) {
+                trackingBtn.addEventListener("touchstart", function () {
+                  window.location.href = "tracking.html";
+                });
+              }
+
+              if (userBtn) { 
+                userBtn.addEventListener("touchstart", function () {
+                  window.location.href = "profile.html";
+                });
+              }
+            }); 
+      </script>
+  </body>
+</html>
